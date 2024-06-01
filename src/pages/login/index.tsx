@@ -1,10 +1,29 @@
 import { Button, TextField } from "@mui/material";
 import { loginSchema } from "@validation";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import useAuthStore from "@store";
+import { useNavigate } from "react-router-dom";
 
 export default function index() {
-  const initialValues = {};
-  const handleSubmit = () => {};
+  const { signin } = useAuthStore();
+  const navigate = useNavigate();
+
+  interface Login {
+    email: string;
+    password: string;
+  }
+
+  const initialValues = {
+    email: "",
+    password: "",
+  };
+
+  const handleSubmit = async (value: Login) => {
+    const res = await signin(value);
+    if (res && res.status === 201) {
+      navigate("/main");
+    }
+  };
 
   return (
     <div className="w-full h-[100vh] flex justify-center items-center p-5">
@@ -46,6 +65,7 @@ export default function index() {
             </Form>
           )}
         </Formik>
+        <span className="text-blue-700 cursor-pointer" onClick={()=>(navigate("/signup"))}>Add new admin</span>
       </div>
     </div>
   );
