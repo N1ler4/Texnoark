@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "../App";
-import { Create, Login } from "@pages";
+import { Category, Create, Login , Error, Brand} from "@pages";
 import MainLayout from "@layout"
 
 export default function Router() {
@@ -15,8 +15,10 @@ export default function Router() {
         <Route index element={<Login/>}/>
         <Route path="/signup" element={<Create/>}/>
         <Route path="/main/*" element={<MainLayout/>}>
-          
+          <Route index element={<Category/>}/>
+          <Route path="brands" element={<Brand/>}/>
         </Route>
+        <Route path="*" element={<Error/>}/>
       </Route>
     )
   );
