@@ -1,6 +1,6 @@
 import HomeIcon from '@mui/icons-material/Home';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-// import GroupIcon from '@mui/icons-material/Group';
+import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 
 interface Route  {
   path: string,
@@ -19,11 +19,11 @@ const router : Route[] = [
     content: "Brands",
     icon: <LocalOfferIcon/>
   },
-  // {
-  //   path: "/main/users",
-  //   content: "Users",
-  //   icon: <GroupIcon/>
-  // },
+  {
+    path: "/main/settings",
+    content: "Settings",
+    icon: <SettingsSuggestIcon/>
+  },
 ];
 
 export default router;

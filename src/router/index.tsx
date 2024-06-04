@@ -5,11 +5,11 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "../App";
-import { Category, Create, Login , Error, Brand} from "@pages";
+import { Category, Create, Login , Error, Brand , Settings} from "@pages";
 import MainLayout from "@layout"
 
 export default function Router() {
-  const root = createBrowserRouter(
+  const root = createBrowserRouter(   
     createRoutesFromElements(
       <Route path="/" element={<App />}>
         <Route index element={<Login/>}/>
@@ -17,6 +17,7 @@ export default function Router() {
         <Route path="/main/*" element={<MainLayout/>}>
           <Route index element={<Category/>}/>
           <Route path="brands" element={<Brand/>}/>
+          <Route path="settings" element={<Settings/>}/>
         </Route>
         <Route path="*" element={<Error/>}/>
       </Route>

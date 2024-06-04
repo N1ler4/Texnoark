@@ -1,43 +1,17 @@
-import { useEffect, useState } from "react";
-import { Button, TextField } from "@mui/material";
-import { Modal } from "@components";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useState, useEffect } from "react";
+import { Button, Input, Modal } from "antd";
 import { GlobalTable } from "@ui";
 import useBrandStore from "../../store/brand";
-import { ErrorMessage, Field, Formik, Form } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postBrandSchema } from "@validation";
-import { getDataFromCookie } from "@token-service";
+import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
+import { ConfirmModal } from "@components";
 
 export default function Index() {
   const { postBrand, getBrand, deleteBrand } = useBrandStore();
   const [data, setData] = useState([]);
   const [reload, setReload] = useState(false);
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: "#008000",
-        light: "#E9DB5D",
-        dark: "#355E3B",
-        contrastText: "#000",
-      },
-      secondary: {
-        main: "#355E3B",
-        light: "#E9DB5D",
-        dark: "#D55200",
-        contrastText: "#000",
-      },
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            color: "#FFFFFF",
-          },
-        },
-      },
-    },
-  });
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const theader = [
     { title: "", name: "id" },
@@ -64,8 +38,7 @@ export default function Index() {
       const res = await postBrand(value);
       if (res && res.status === 201) {
         handleClose();
-        getData();
-        setReload(!reload);
+        setReload(!reload); // Trigger reload
       }
     } catch (error) {
       console.error("Failed to post brand:", error);
@@ -87,12 +60,13 @@ export default function Index() {
     getData();
   }, [reload]);
 
-  const deletIdData = async () => {
+  const handleDelete = async () => {
     try {
-      const res = await deleteBrand(getDataFromCookie("BrandId"));
-      if (res && res.status === 201) {
-        getData();
+      const res = await deleteBrand(getDataFromCookie("Id"));
+      if (res && res.status === 200) {
         setReload(!reload);
+        setConfirmOpen(false);
+        deleteDataFromCookie("BrandId");
       }
     } catch (error) {
       console.error("Failed to delete brand:", error);
@@ -101,61 +75,76 @@ export default function Index() {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <div className="mb-4">
-          <Button variant="contained" onClick={handleOpen} color="primary">
-            Add Brand
-          </Button>
-        </div>
-        <Modal open={open} handleClose={handleClose} title="Add New Brand">
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validationSchema={postBrandSchema}
-          >
-            {({ isSubmitting }) => (
-              <Form className="flex flex-col gap-5">
-                <Field
-                  type="text"
-                  name="brand_name"
-                  as={TextField}
-                  label="Brand Name"
-                  placeholder="Brand Name"
-                  size="small"
-                  style={{ width: "100%" }}
-                />
-                <ErrorMessage
-                  name="brand_name"
-                  component="div"
-                  className="error"
-                />
-                <Field
-                  type="text"
-                  name="brand_description"
-                  as={TextField}
-                  label="Brand Description"
-                  placeholder="Brand Description"
-                  size="small"
-                  style={{ width: "100%" }}
-                />
-                <ErrorMessage
-                  name="brand_description"
-                  component="div"
-                  className="error"
-                />
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  Submit
-                </Button>
-              </Form>
-            )}
-          </Formik>
-        </Modal>
-      </ThemeProvider>
-      <GlobalTable theader={theader} tbody={data} deletIdData={deletIdData} />
+      <div className="mb-4">
+        <Button
+          type="primary"
+          style={{
+            backgroundColor: "green",
+            color: "white",
+            borderColor: "green",
+          }}
+          onClick={handleOpen}
+        >
+          Add Brand
+        </Button>
+      </div>
+      <Modal
+        title="Add New Brand"
+        visible={open}
+        onCancel={handleClose}
+        footer={null}
+      >
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={postBrandSchema}
+        >
+          {({ isSubmitting }) => (
+            <Form className="flex flex-col gap-5">
+              <Field
+                type="text"
+                name="brand_name"
+                as={Input}
+                placeholder="Brand Name"
+                size="large"
+                style={{ width: "100%" }}
+              />
+              <ErrorMessage
+                name="brand_name"
+                component="div"
+                className="error"
+              />
+              <Field
+                type="text"
+                name="brand_description"
+                as={Input}
+                placeholder="Brand Description"
+                size="large"
+                style={{ width: "100%" }}
+              />
+              <ErrorMessage
+                name="brand_description"
+                component="div"
+                className="error"
+              />
+              <Button type="primary" htmlType="submit" loading={isSubmitting}>
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Modal>
+      <ConfirmModal
+        visible={confirmOpen}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={handleDelete}
+        message="Are you sure you want to delete brand?"
+      />
+      <GlobalTable
+        theader={theader}
+        tbody={data}
+        deletIdData={() => setConfirmOpen(true)}
+      />
     </>
   );
 }
