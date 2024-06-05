@@ -50,11 +50,11 @@ function BasicModal() {
   const handleClose = () => setOpen(false);
 
   const initialValues = {
-    category_name: "",
+    name: "",
   };
   const handleSubmit = async (value: any) => {
     const res = await updateCategory(value, getDataFromCookie("catId"));
-    if (res && res.status === 201) {
+    if (res && res.status === 200) {
       handleClose();
     }
   };
@@ -81,7 +81,7 @@ function BasicModal() {
                 <Form className="flex flex-col gap-5">
                   <Field
                     type="text"
-                    name="category_name"
+                    name="name"
                     as={TextField}
                     label="Category Name"
                     placeholder="Category Name"
@@ -89,7 +89,7 @@ function BasicModal() {
                     style={{ width: "100%" }}
                   />
                   <ErrorMessage
-                    name="category_name"
+                    name="name"
                     component="div"
                     className="error"
                   />

@@ -5,10 +5,11 @@ import http from "@http";
 const useAuthStore = create(() => ({
   signin: async (payload: any) => {
     try {
-      const response = await http.post("/admin/login", payload);
-      if (response.status === 201) {
-        saveDataToCookie("token", response?.data?.tokens?.access_token);
-        saveDataToCookie("admin-id" , response?.data?.admin.id)
+      const response = await http.post("/auth/sign-in", payload);
+      if (response.status === 200) {
+        console.log(response)
+        saveDataToCookie("token", response?.data?.data?.token);
+        saveDataToCookie("admin-id" , response?.data?.data?.admin.id)
         return response;
       }
     } catch (err) {
@@ -17,7 +18,7 @@ const useAuthStore = create(() => ({
   },
   signup: async (payload: any) => {
     try {
-      const res = await http.post("/admin/create", payload);
+      const res = await http.post("/auth/admin/sign-up", payload);
       if (res.status === 201) {
         return res;
       }

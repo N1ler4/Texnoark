@@ -9,18 +9,18 @@ export default function index() {
   const navigate = useNavigate();
 
   interface Login {
-    email: string;
+    PhoneNumber: string;
     password: string;
   }
 
   const initialValues = {
-    email: "",
+    PhoneNumber: "",
     password: "",
   };
 
   const handleSubmit = async (value: Login) => {
     const res = await signin(value);
-    if (res && res.status === 201) {
+    if (res && res.status === 200) {
       navigate("/main");
     }
   };
@@ -38,15 +38,15 @@ export default function index() {
           {({ isSubmitting }) => (
             <Form className="flex flex-col gap-5">
               <Field
-                type="email"
-                name="email"
+                type="text"
+                name="PhoneNumber"
                 as={TextField}
-                label="Email"
-                placeholder="Email"
+                label="PhoneNumber"
+                placeholder="PhoneNumber"
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="email" component="div" className="error" />
+              <ErrorMessage name="PhoneNumber" component="div" className="error" />
 
               <Field
                 type="password"

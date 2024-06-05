@@ -58,7 +58,7 @@ export default function Profile() {
         ) : (
           <div className="flex items-center gap-4">
             <p>Offline</p>
-            <div className="w-[20px] h-[20px] rounded-full bg-red-400"></div>
+            <div className="w-[20px] h-[20px] rounded-full bg-yellow-400"></div>
           </div>
         )}
       </div>

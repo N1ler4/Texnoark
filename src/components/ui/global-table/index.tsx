@@ -21,7 +21,7 @@ function Index({ tbody, theader, deletIdData, getServese }: any) {
           </tr>
         </thead>
         <tbody>
-          {tbody.map((item: any, index: number) => (
+          {tbody?.map((item: any, index: number) => (
             <tr key={index}>
               {theader.map((item2: any, index2: number) => (
                 <td

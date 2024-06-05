@@ -4,7 +4,7 @@ import http from "@http";
 const useBrandStore = create(() => ({
   postBrand: async (payload: any) => {
     try {
-      const res = await http.post("/brand/create", payload);
+      const res = await http.post("/brand", payload);
       if (res.status === 201) {
         return res;
       }
@@ -12,9 +12,9 @@ const useBrandStore = create(() => ({
       console.log(err);
     }
   },
-  getBrand: async () => {
+  getBrand: async (limit:any , page:any) => {
     try {
-      const res = await http.get("/brand/get-all/q");
+      const res = await http.get(`/brand?limit=${limit}&page=${page}`);
       if (res.status === 200) {
         return res;
       }
@@ -24,7 +24,7 @@ const useBrandStore = create(() => ({
   },
   deleteBrand: async (id: any) => {
     try{
-      const res = await http.delete(`/brand/delete/${id}`)
+      const res = await http.delete(`/brand/${id}`)
       if(res.status === 200){
         return res;
       }
@@ -35,7 +35,7 @@ const useBrandStore = create(() => ({
   },
   updateBrand: async (value:any , id:any) =>{
     try{
-      const res = await http.put(`/brand/update/${id}`, value)
+      const res = await http.patch(`/brand/${id}`, value)
       if(res.status === 200){
         return res;
       }

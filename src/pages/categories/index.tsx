@@ -13,7 +13,7 @@ export default function Index() {
 
   const theader = [
     { title: "", name: "id" },
-    { title: "Category name", name: "category_name" },
+    { title: "Category name", name: "name" },
     { title: "Action", name: "action" },
   ];
 
@@ -21,7 +21,7 @@ export default function Index() {
   const handleClose = () => setOpen(false);
 
   const initialValues = {
-    category_name: "",
+    name: "",
   };
 
   const handleSubmit = async (value: any) => {
@@ -33,9 +33,10 @@ export default function Index() {
   };
 
   const getData = async () => {
-    const res = await getCategory();
+    const res = await getCategory(10 , 1);
+    console.log(res)
     if (res && res.status === 200) {
-      setData(res.data.categories);
+      setData(res.data.data);
     }
   };
 
@@ -84,13 +85,13 @@ export default function Index() {
           {({ isSubmitting }) => (
             <Form className="flex flex-col gap-5">
               <Field
-                name="category_name"
+                name="name"
                 as={Input}
                 placeholder="Category Name"
                 size="large"
               />
               <ErrorMessage
-                name="category_name"
+                name="name"
                 component="div"
                 className="error"
               />

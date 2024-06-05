@@ -1,22 +1,26 @@
 import { useState, useEffect } from "react";
-import { Button, Input, Modal } from "antd";
+import { Button, Input, Modal, Select } from "antd";
 import { GlobalTable } from "@ui";
 import useBrandStore from "../../store/brand";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postBrandSchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
 import { ConfirmModal } from "@components";
+import useCategoryStore from "../../store/category";
 
 export default function Index() {
   const { postBrand, getBrand, deleteBrand } = useBrandStore();
   const [data, setData] = useState([]);
+  const [categoryId, setCategoryId] = useState<any>([]);
+  console.log(categoryId);
   const [reload, setReload] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { getCategory } = useCategoryStore();
 
   const theader = [
     { title: "", name: "id" },
-    { title: "Brand name", name: "brand_name" },
-    { title: "Brand description", name: "brand_description" },
+    { title: "Brand name", name: "name" },
+    { title: "Brand description", name: "description" },
     { title: "Action", name: "brand action" },
   ];
 
@@ -26,11 +30,11 @@ export default function Index() {
   const handleClose = () => setOpen(false);
 
   const initialValues = {
-    brand_name: "",
-    brand_description: "",
+    name: "",
+    description: "",
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUoKV0B7GXf5IHL2fem9xmVrVdGo9pFBTwWA&s",
-    position: 1,
+    category_id : ""
   };
 
   const handleSubmit = async (value: any) => {
@@ -38,18 +42,27 @@ export default function Index() {
       const res = await postBrand(value);
       if (res && res.status === 201) {
         handleClose();
-        setReload(!reload); // Trigger reload
+        setReload(!reload);
       }
     } catch (error) {
       console.error("Failed to post brand:", error);
     }
   };
 
+  const getCategoryId = async () => {
+    const res = await getCategory(10, 1);
+    console.log(res);
+    if (res && res.status === 200) {
+      setCategoryId(res.data.data);
+    }
+  };
+
   const getData = async () => {
     try {
-      const res = await getBrand();
+      const res = await getBrand(10, 1);
+      console.log(res);
       if (res && res.status === 200) {
-        setData(res.data.brands);
+        setData(res.data.data);
       }
     } catch (error) {
       console.error("Failed to get brands:", error);
@@ -58,6 +71,7 @@ export default function Index() {
 
   useEffect(() => {
     getData();
+    getCategoryId();
   }, [reload]);
 
   const handleDelete = async () => {
@@ -122,6 +136,20 @@ export default function Index() {
                 size="large"
                 style={{ width: "100%" }}
               />
+              <Field
+                type="text"
+                name="category_id"
+                as={Select}
+                placeholder="Choose a category"
+                size="large"
+                style={{ width: "100%" }}
+              >
+                {
+                  categoryId.map((item:any) => (
+                    <Select.Option value={item.id}>{item.name}</Select.Option>
+                  ))
+                }
+              </Field>
               <ErrorMessage
                 name="brand_description"
                 component="div"
