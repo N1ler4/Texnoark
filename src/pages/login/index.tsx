@@ -9,12 +9,12 @@ export default function index() {
   const navigate = useNavigate();
 
   interface Login {
-    PhoneNumber: string;
+    phone_number: string;
     password: string;
   }
 
   const initialValues = {
-    PhoneNumber: "",
+    phone_number: "",
     password: "",
   };
 
@@ -39,14 +39,14 @@ export default function index() {
             <Form className="flex flex-col gap-5">
               <Field
                 type="text"
-                name="PhoneNumber"
+                name="phone_number"
                 as={TextField}
-                label="PhoneNumber"
-                placeholder="PhoneNumber"
+                label="Phone Number"
+                placeholder="Phone Number"
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="PhoneNumber" component="div" className="error" />
+              <ErrorMessage name="phone_number" component="div" className="error" />
 
               <Field
                 type="password"

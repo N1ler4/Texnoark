@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Modal,
   Box,
@@ -24,6 +24,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -43,12 +44,19 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          color: "#00",
+          color: "#000",
         },
       },
     },
   },
 });
+
+interface FormValues {
+  brand_name: string;
+  brand_description: string;
+  image: string;
+  position: number;
+}
 
 function BasicModal() {
   const [reload, setReload] = useState(false);
@@ -57,7 +65,7 @@ function BasicModal() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const initialValues = {
+  const initialValues: FormValues = {
     brand_name: "",
     brand_description: "",
     image:
@@ -65,15 +73,17 @@ function BasicModal() {
     position: 1,
   };
 
-  const handleSubmit = async (value: any) => {
-    const res = await updateBrand(value, getDataFromCookie("Id"));
-    if (res && res.status === 200) {
-      handleClose();
-      setReload(!reload);
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      const res = await updateBrand(values, getDataFromCookie("Id"));
+      if (res && res.status === 200) {
+        handleClose();
+        setReload(!reload);
+      }
+    } catch (error) {
+      console.error("Failed to update brand:", error);
     }
   };
-  useEffect(() => {}, [reload]);
-
 
   return (
     <div>
@@ -102,7 +112,7 @@ function BasicModal() {
                     label="Brand Name"
                     placeholder="Brand Name"
                     size="small"
-                    style={{ width: "100%" }}
+                    fullWidth
                   />
                   <ErrorMessage
                     name="brand_name"
@@ -116,7 +126,7 @@ function BasicModal() {
                     label="Description"
                     placeholder="Description"
                     size="small"
-                    style={{ width: "100%" }}
+                    fullWidth
                   />
                   <ErrorMessage
                     name="brand_description"

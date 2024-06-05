@@ -1,13 +1,23 @@
 import { useState, useEffect } from "react";
-import { Button, Input, Modal, Select, Upload, message } from "antd";
-import { GlobalTable } from "@ui";  
+import {
+  Button,
+  Input,
+  Modal,
+  Pagination,
+  Select,
+  Upload,
+  message,
+} from "antd";
+import { GlobalTable } from "@ui";
 import useBrandStore from "../../store/brand";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postBrandSchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
-import { ConfirmModal } from "@components"; 
+import { ConfirmModal } from "@components";
 import useCategoryStore from "../../store/category";
 import { UploadOutlined } from "@ant-design/icons";
+import { useLocation, useNavigate } from "react-router-dom";
+const { Search } = Input;
 
 export default function Index() {
   const { postBrand, getBrand, deleteBrand } = useBrandStore();
@@ -16,9 +26,15 @@ export default function Index() {
   const [reload, setReload] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { getCategory } = useCategoryStore();
+  const [totalItems, setTotalItems] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+  const navigate = useNavigate();
 
   const theader = [
-    { title: "", name: "id" },  
+    { title: "", name: "id" },
     { title: "Brand name", name: "name" },
     { title: "Brand description", name: "description" },
     { title: "Action", name: "brand action" },
@@ -41,13 +57,13 @@ export default function Index() {
     formData.append("name", values.name);
     formData.append("description", values.description);
     formData.append("category_id", values.category_id);
-    
+
     console.log("File field:", values.file);
-  
+
     if (values.file) {
       formData.append("file", values.file);
     }
-  
+
     try {
       console.log("FormData:", formData);
       const res = await postBrand(formData);
@@ -64,9 +80,9 @@ export default function Index() {
 
   const getCategoryId = async () => {
     try {
-      const res = await getCategory(10, 1);
+      const res = await getCategory(10, 1, "");
       if (res && res.status === 200) {
-        setCategoryId(res.data.data);
+        setCategoryId(res.data.data.categories);
       }
     } catch (error) {
       console.error("Failed to get categories:", error);
@@ -74,10 +90,14 @@ export default function Index() {
   };
 
   const getData = async () => {
+    searchParams.set("page", String(page));
+    navigate(`?${searchParams.toString()}`);
     try {
-      const res = await getBrand(10, 1);
+      const res = await getBrand(10, page, searchTerm);
+      console.log(res);
       if (res && res.status === 200) {
-        setData(res.data.data);
+        setData(res.data.data.brands);
+        setTotalItems(res.data.data.count);
       }
     } catch (error) {
       console.error("Failed to get brands:", error);
@@ -87,7 +107,7 @@ export default function Index() {
   useEffect(() => {
     getData();
     getCategoryId();
-  }, [reload]);
+  }, [page, searchTerm, reload]);
 
   const handleDelete = async () => {
     try {
@@ -104,9 +124,18 @@ export default function Index() {
     }
   };
 
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    setPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
+
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-4 flex justify-between">
         <Button
           type="primary"
           style={{
@@ -118,6 +147,13 @@ export default function Index() {
         >
           Add Brand
         </Button>
+        <Search
+          placeholder="Search brands"
+          enterButton="Search"
+          size="large"
+          style={{ maxWidth: 300, marginBottom: 16 }}
+          onSearch={handleSearch}
+        />
       </div>
       <Modal
         title="Add New Brand"
@@ -208,6 +244,16 @@ export default function Index() {
         tbody={data}
         deletIdData={() => setConfirmOpen(true)}
       />
+      {totalItems > 0 ? (
+        <Pagination
+          current={page}
+          pageSize={10}
+          total={totalItems}
+          onChange={handlePageChange}
+        />
+      ) : (
+        console.log("No brands found")
+      )}
     </>
   );
 }

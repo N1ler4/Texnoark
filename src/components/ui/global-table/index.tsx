@@ -23,14 +23,14 @@ function Index({ tbody, theader, deletIdData }: any) {
         <tbody>
           {tbody?.map((item: any, index: number) => (
             <tr key={index}>
-              {theader.map((item2: any, index2: number) => (
+              {theader?.map((item2: any, index2: number) => (
                 <td
                   key={index2}
                   className={
                     index % 2 ? "border bg-[#F9F9F9] py-2" : "border py-2"
                   }
                 >
-                  {item2.name === "action" ? (
+                  {item2?.name === "action" ? (
                     <div className="w-full flex items-center justify-center gap-1">
                       <button
                         onClick={() => {

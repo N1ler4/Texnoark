@@ -12,9 +12,9 @@ const useCategoryStore = create(() => ({
       console.log(err);
     }
   },
-  getCategory: async (limit:any , page:any) => {
+  getCategory: async (limit:any , page:any , search:any) => {
     try {
-      const res = await http.get(`/category?limit=${limit}&page=${page}`);
+      const res = await http.get(`/category/search?search=${search}&limit=${limit}&page=${page}`);
       if (res.status === 200) {
         return res;
       }

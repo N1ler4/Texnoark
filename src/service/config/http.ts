@@ -2,7 +2,7 @@ import axios from "axios";
 import { getDataFromCookie } from "@token-service";
 
 const http = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: "https://ecomapi.ilyosbekdev.uz",
 });
 
 http.interceptors.request.use((config) => {

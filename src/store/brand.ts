@@ -12,9 +12,9 @@ const useBrandStore = create(() => ({
       console.log(err);
     }
   },
-  getBrand: async (limit:any , page:any) => {
+  getBrand: async (limit:any , page:any , search:any) => {
     try {
-      const res = await http.get(`/brand?limit=${limit}&page=${page}`);
+      const res = await http.get(`/brand/search?search=${search}&limit=${limit}&page=${page}`);
       if (res.status === 200) {
         return res;
       }

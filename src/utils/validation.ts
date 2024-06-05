@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const loginSchema = Yup.object().shape({
-  PhoneNumber: Yup.string().min(13, "Too Short!").required("Required"),
+  phone_number: Yup.string().min(13, "Too Short!").required("Required"),
   password: Yup.string().min(6, "Too Short!").required("Required"),
 });
 export const signUpSchema = Yup.object().shape({
