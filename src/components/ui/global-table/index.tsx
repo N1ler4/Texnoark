@@ -2,7 +2,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { saveDataToCookie } from "@token-service";
 import { BrandEdit, CategoryEdit } from "@components";
 
-function Index({ tbody, theader, deletIdData, getServese }: any) {
+function Index({ tbody, theader, deletIdData }: any) {
   const handleDelete = (id: any) => {
     console.log("Deleting item with id:", id);
     deletIdData(id);

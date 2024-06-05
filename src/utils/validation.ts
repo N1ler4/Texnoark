@@ -19,4 +19,6 @@ export const postCategorySchema = Yup.object().shape({
 export const postBrandSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
   description: Yup.string().required("Required"),
+  file: Yup.string().required("Required"),
+  category_id: Yup.string().required("Required"),
 });

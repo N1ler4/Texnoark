@@ -4,10 +4,12 @@ import "./style.css";
 import { getDataFromCookie } from "@token-service";
 import { useEffect, useState } from "react";
 import { ConfirmModal } from "@components";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { getadmin, deleteadmin } = useAuthStore();
   const [data, setData] = useState<any>({});
+  const navigate = useNavigate()
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -22,6 +24,7 @@ export default function Profile() {
   const handleConfirmAction = () => {
     deleteadmin(data.id);
     handleCloseModal();
+    navigate("/")
   };
 
 
@@ -31,7 +34,7 @@ export default function Profile() {
         const adminId = getDataFromCookie("admin-id");
         const res = await getadmin(adminId);
         if (res && res.status === 200) {
-          setData(res.data);
+          setData(res.data.data);
         }
       } catch (error) {
         console.error("Failed to fetch admin data:", error);
@@ -49,7 +52,7 @@ export default function Profile() {
         onConfirm={handleConfirmAction}
         message="Are you sure you want to delete account?"
       />
-      <div className="absolute top-[80px] right-5">
+      {/* <div className="absolute top-[80px] right-5">
         {data.is_active == true ? (
           <div className="flex items-center gap-4">
             <p>Online</p>
@@ -61,7 +64,7 @@ export default function Profile() {
             <div className="w-[20px] h-[20px] rounded-full bg-yellow-400"></div>
           </div>
         )}
-      </div>
+      </div> */}
       <div className="container">
         <div className="card cursor-pointer">
           <div className="face face1">
