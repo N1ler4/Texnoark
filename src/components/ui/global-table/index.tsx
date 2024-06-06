@@ -1,8 +1,12 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { saveDataToCookie } from "@token-service";
 import { BrandEdit, CategoryEdit } from "@components";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 function Index({ tbody, theader, deletIdData }: any) {
+  const navigate = useNavigate();
+
   const handleDelete = (id: any) => {
     console.log("Deleting item with id:", id);
     deletIdData(id);
@@ -44,6 +48,15 @@ function Index({ tbody, theader, deletIdData }: any) {
                       <div onClick={() => saveDataToCookie("catId", item.id)}>
                         <CategoryEdit />
                       </div>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => (
+                          navigate(`/main/category/${item.id}`),
+                          saveDataToCookie("Id", item.id)
+                        )}
+                      >
+                        <PlusCircleOutlined className="text-[24px]" />
+                      </div>
                     </div>
                   ) : item2.name === "brand action" ? (
                     <div className="w-full flex items-center justify-center gap-1">
@@ -60,7 +73,22 @@ function Index({ tbody, theader, deletIdData }: any) {
                         <BrandEdit />
                       </div>
                     </div>
-                  ) : item2.name === "id" ? (
+                  ) : item2.name === "sub action" ? (
+                    <div className="w-full flex items-center justify-center gap-1">
+                      <button
+                        onClick={() => {
+                          handleDelete(item.id);
+                          saveDataToCookie("BrandId", item.id);
+                        }}
+                        className="py-1 px-3 rounded-md bg-red-500 hover:bg-red-700 active:bg-red-500 duration-300  flex items-center gap-2"
+                      >
+                        <DeleteIcon />
+                      </button>
+                      <div onClick={() => saveDataToCookie("Id", item.id)}>
+                        <BrandEdit />
+                      </div>
+                    </div>
+                  )   : item2.name === "id" ? (
                     <div className="w-full flex items-center justify-center">
                       <input type="checkbox" className=" w-4 h-4" />
                     </div>

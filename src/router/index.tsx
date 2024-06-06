@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "../App";
-import { Category, Create, Login , Error, Brand , Settings} from "@pages";
+import { Category, Create, Login , Error, Brand , Settings, SingleCategory} from "@pages";
 import MainLayout from "@layout"
 
 export default function Router() {
@@ -16,6 +16,7 @@ export default function Router() {
         <Route path="/signup" element={<Create/>}/>
         <Route path="/main/*" element={<MainLayout/>}>
           <Route index element={<Category/>}/>
+          <Route path="category/:id" element={<SingleCategory/>}/>
           <Route path="brands" element={<Brand/>}/>
           <Route path="settings" element={<Settings/>}/>
         </Route>
