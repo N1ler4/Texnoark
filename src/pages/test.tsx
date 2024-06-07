@@ -9,12 +9,12 @@ import {
   message,
 } from "antd";
 import { GlobalTable } from "@ui";
-import useBrandStore from "../../store/brand";
+import useBrandStore from "../store/brand";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postBrandSchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
 import { ConfirmModal } from "@components";
-import useCategoryStore from "../../store/category";
+import useCategoryStore from "../store/category";
 import { UploadOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 const { Search } = Input;
@@ -48,7 +48,7 @@ export default function Index() {
   const initialValues = {
     name: "",
     description: "",
-    file: null,
+    files: [], 
     category_id: null,
   };
 
@@ -58,10 +58,12 @@ export default function Index() {
     formData.append("description", values.description);
     formData.append("category_id", values.category_id);
 
-    console.log("File field:", values.file);
+    console.log("Files field:", values.files);
 
-    if (values.file) {
-      formData.append("file", values.file);
+    if (values.files && values.files.length > 0) {
+      values.files.forEach((file: any) => {
+        formData.append("files", file);
+      });
     }
 
     try {
@@ -134,7 +136,7 @@ export default function Index() {
   };
 
   return (
-    <>  
+    <>
       <div className="mb-4 flex justify-between">
         <Button
           type="primary"
@@ -212,20 +214,21 @@ export default function Index() {
                 component="div"
                 className="error"
               />
-              <Field name="file">
+              <Field name="files">
                 {({ field }: any) => (
                   <Upload
                     {...field}
                     beforeUpload={(file) => {
-                      setFieldValue("file", file);
+                      setFieldValue("files", [...field.value, file]);
                       return false;
                     }}
+                    multiple
                   >
                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                   </Upload>
                 )}
               </Field>
-              <ErrorMessage name="file" component="div" className="error" />
+              <ErrorMessage name="files" component="div" className="error" />
               <Button type="primary" htmlType="submit" loading={isSubmitting}>
                 Submit
               </Button>
@@ -244,7 +247,7 @@ export default function Index() {
         tbody={data}
         deletIdData={() => setConfirmOpen(true)}
       />
-      {totalItems > 0 ? (
+      {totalItems > 10 ? (
         <Pagination
           current={page}
           pageSize={10}

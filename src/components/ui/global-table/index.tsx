@@ -1,6 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { saveDataToCookie } from "@token-service";
-import { BrandEdit, CategoryEdit } from "@components";
+import { BrandEdit, CategoryEdit, UpdateSub , UpdateBrandCategory} from "@components";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
@@ -72,23 +72,45 @@ function Index({ tbody, theader, deletIdData }: any) {
                       <div onClick={() => saveDataToCookie("Id", item.id)}>
                         <BrandEdit />
                       </div>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => (
+                          navigate(`/main/brands/${item.id}`),
+                          saveDataToCookie("BrandId", item.id)
+                        )}
+                      >
+                        <PlusCircleOutlined className="text-[24px]" />
+                      </div>
                     </div>
                   ) : item2.name === "sub action" ? (
                     <div className="w-full flex items-center justify-center gap-1">
                       <button
                         onClick={() => {
                           handleDelete(item.id);
-                          saveDataToCookie("BrandId", item.id);
                         }}
                         className="py-1 px-3 rounded-md bg-red-500 hover:bg-red-700 active:bg-red-500 duration-300  flex items-center gap-2"
                       >
                         <DeleteIcon />
                       </button>
-                      <div onClick={() => saveDataToCookie("Id", item.id)}>
-                        <BrandEdit />
+                      <div onClick={() => saveDataToCookie("subId", item.id)}>
+                        <UpdateSub />
                       </div>
                     </div>
-                  )   : item2.name === "id" ? (
+                  ) : item2.name === "brandcategory action" ? (
+                    <div className="w-full flex items-center justify-center gap-1">
+                      <button
+                        onClick={() => {
+                          handleDelete(item.id);
+                        }}
+                        className="py-1 px-3 rounded-md bg-red-500 hover:bg-red-700 active:bg-red-500 duration-300  flex items-center gap-2"
+                      >
+                        <DeleteIcon />
+                      </button>
+                      <div onClick={() => saveDataToCookie("brandCategoryId", item.id)}>
+                        <UpdateBrandCategory />
+                      </div>
+                    </div>
+                  ) : item2.name === "id" ? (
                     <div className="w-full flex items-center justify-center">
                       <input type="checkbox" className=" w-4 h-4" />
                     </div>

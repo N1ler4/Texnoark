@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Pagination } from "antd";
-import { GlobalTable, Notification } from "@ui";
-import useCategoryStore from "../../store/category";
+import { GlobalTable } from "@ui";
+import useBrandCategoryStore from "../../store/brand-category";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postCategorySchema } from "@validation";
-import { deleteDataFromCookie } from "@token-service";
+import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const { Search } = Input;
 
 export default function Index() {
   const navigate = useNavigate();
-  const { postCategory, getCategory, deleteCategory } = useCategoryStore();
+  const { postBrandCategory, getBrandCategory, deleteBrandCategory } = useBrandCategoryStore();
   const [data, setData] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
@@ -22,32 +22,38 @@ export default function Index() {
 
   const theader = [
     { title: "", name: "id" },
-    { title: "Category name", name: "name" },
-    { title: "Action", name: "action" },
+    { title: "Brand Category name", name: "name" },
+    { title: "Action", name: "brandcategory action" },
   ];
+
+  interface postData {
+    name: string;
+    brand_id: any;
+  }
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const initialValues = {
     name: "",
+    brand_id: Number(getDataFromCookie("BrandId"))
   };
 
-  const handleSubmit = async (value: any) => {
-    const res = await postCategory(value);
+  const handleSubmit = async (value: postData) => {
+    const res = await postBrandCategory(value);
     if (res && res.status === 201) {
       handleClose();
       getData(page, searchTerm);
-      Notification.success("Success!", "Successfully added category");
     }
   };
 
   const getData = async (page: number, search: string) => {
     searchParams.set("page", String(page));
     navigate(`?${searchParams.toString()}`);
-    const res = await getCategory(10, page, search);
+    const res = await getBrandCategory(10, page, search);
+    console.log(res);
     if (res && res.status === 200) {
-      setData(res.data.data.categories);
+      setData(res.data.data.brandCategories);
       setTotalItems(res.data.data.count);
     }
   };
@@ -58,12 +64,11 @@ export default function Index() {
 
   const handleDelete = (id: string) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this category?",
+      title: "Are you sure you want to delete this Brand-category?",
       onOk: async () => {
-        await deleteCategory(id);
+        await deleteBrandCategory(id);
         getData(page, searchTerm);
         deleteDataFromCookie("categoryId");
-        Notification.success("Success!", "Successfully deleted category");
       },
     });
   };
@@ -89,7 +94,7 @@ export default function Index() {
           }}
           onClick={handleOpen}
         >
-          Add Category
+          Add Brand Category
         </Button>
         <Search
           placeholder="Search categories"
@@ -100,7 +105,7 @@ export default function Index() {
         />
       </div>
       <Modal
-        title="Add New Category"
+        title="Add New Brand Category"
         visible={open}
         onCancel={handleClose}
         footer={null}
@@ -115,7 +120,7 @@ export default function Index() {
               <Field
                 name="name"
                 as={Input}
-                placeholder="Category Name"
+                placeholder="Sub Category Name"
                 size="large"
               />
               <ErrorMessage name="name" component="div" className="error" />

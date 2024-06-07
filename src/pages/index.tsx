@@ -5,5 +5,6 @@ import Error from "./error"
 import Brand from "./brands"
 import Settings from "./settings"
 import SingleCategory from "./sub-category"
+import SingleBrand from "./brand-category"
 
-export {Login , Create , Category , Error , Brand , Settings , SingleCategory} 
+export {Login , Create , Category , Error , Brand , Settings , SingleCategory , SingleBrand} 

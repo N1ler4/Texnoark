@@ -12,9 +12,9 @@ const useSubCategoryStore = create(() => ({
       console.log(err);
     }
   },
-  getSubCategory: async (limit:any , page:any , search:any) => {
+  getSubCategory: async (limit:any , page:any , search:any , id:any) => {
     try {
-      const res = await http.get(`/sub-category/search?search=${search}&limit=${limit}&page=${page}`);
+      const res = await http.get(`/sub-category/search/${id}?search=${search}&limit=${limit}&page=${page}`);
       if (res.status === 200) {
         return res;
       }

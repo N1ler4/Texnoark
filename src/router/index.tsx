@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "../App";
-import { Category, Create, Login , Error, Brand , Settings, SingleCategory} from "@pages";
+import { Category, Create, Login , Error, Brand , Settings, SingleCategory , SingleBrand} from "@pages";
 import MainLayout from "@layout"
 
 export default function Router() {
@@ -18,6 +18,7 @@ export default function Router() {
           <Route index element={<Category/>}/>
           <Route path="category/:id" element={<SingleCategory/>}/>
           <Route path="brands" element={<Brand/>}/>
+          <Route path="brands/:id" element={<SingleBrand/>}/>
           <Route path="settings" element={<Settings/>}/>
         </Route>
         <Route path="*" element={<Error/>}/>

@@ -50,7 +50,7 @@ export default function Index() {
   const getData = async (page: number, search: string) => {
     searchParams.set("page", String(page));
     navigate(`?${searchParams.toString()}`);
-    const res = await getSubCategory(10, page, search);
+    const res = await getSubCategory(10, page, search , getDataFromCookie("Id"));
     console.log(res);
     if (res && res.status === 200) {
       setData(res.data.data.subcategories);
