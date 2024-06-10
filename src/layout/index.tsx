@@ -41,6 +41,7 @@ const ResponsiveDrawer = () => {
     if (pathname === "/main/settings") return "Settings";
     if (pathname === "/main/product") return "Products";
     if (pathname === "/main") return "Category";
+    if (pathname === "/main/stock") return "Stock";
     if (/^\/main\/category\/\d+$/.test(pathname)) return "Subcategory";
     if (/^\/main\/brands\/\d+$/.test(pathname)) return "Category Brands";
     if (/^\/main\/product\/\d+$/.test(pathname)) return "Product Details";

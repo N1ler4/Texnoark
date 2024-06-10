@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import useAuthStore from "@store";
 import "./style.css";
-import { getDataFromCookie, saveDataToCookie } from "@token-service";
+import { getDataFromCookie } from "@token-service";
 import { useEffect, useState } from "react";
 import { ConfirmModal } from "@components";
 import { useNavigate } from "react-router-dom";

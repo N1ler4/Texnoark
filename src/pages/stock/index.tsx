@@ -119,7 +119,7 @@ export default function Index() {
           Add Product
         </Button>
         <Input.Search
-          placeholder="Search products..."
+          placeholder="Search products in stock..."
           enterButton="Search"
           size="large"
           style={{ maxWidth: 300, marginBottom: 16 }}

@@ -6,7 +6,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import { deleteDataFromCookie, getDataFromCookie, saveDataToCookie } from "@token-service";
 import useCategoryStore from "../../store/category";
 import useBrandStore from "../../store/brand";
-import useBrandCategoryStore from "../../store/brand-category";
 import useProductStore from "../../store/product";
 import { Input, Select, Button, Modal } from "antd";
 
