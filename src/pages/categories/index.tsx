@@ -118,7 +118,7 @@ export default function Index() {
                 placeholder="Category Name"
                 size="large"
               />
-              <ErrorMessage name="name" component="div" className="error" />
+              <ErrorMessage name="name" component="div" className="text-[#ff0000]" />
               <Button
                 type="primary"
                 htmlType="submit"
@@ -137,12 +137,16 @@ export default function Index() {
       </Modal>
       <GlobalTable theader={theader} tbody={data} deletIdData={handleDelete} />
 
-      <Pagination
-        current={page}
-        pageSize={10}
-        total={totalItems}
-        onChange={handlePageChange}
-      />
+      {totalItems > 10 ? (
+        <Pagination
+          current={page}
+          pageSize={10}
+          total={totalItems}
+          onChange={handlePageChange}
+        />
+      ) : (
+        console.log("No brands found")
+      )}
     </>
   );
 }

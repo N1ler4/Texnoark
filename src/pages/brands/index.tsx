@@ -37,6 +37,7 @@ export default function Index() {
     { title: "", name: "id" },
     { title: "Brand name", name: "name" },
     { title: "Brand description", name: "description" },
+    { title: "Image", name: "image" },
     { title: "Action", name: "brand action" },
   ];
 
@@ -111,7 +112,7 @@ export default function Index() {
 
   const handleDelete = async () => {
     try {
-      const res = await deleteBrand(getDataFromCookie("BrandId"));
+      const res = await deleteBrand(getDataFromCookie("brandId"));
       if (res && res.status === 200) {
         setReload(!reload);
         setConfirmOpen(false);
@@ -134,7 +135,7 @@ export default function Index() {
   };
 
   return (
-    <>  
+    <>
       <div className="mb-4 flex justify-between">
         <Button
           type="primary"
@@ -176,7 +177,7 @@ export default function Index() {
                 size="large"
                 style={{ width: "100%" }}
               />
-              <ErrorMessage name="name" component="div" className="error" />
+              <ErrorMessage name="name" component="div" className="text-[#ff0000]" />
               <Field
                 type="text"
                 name="description"
@@ -188,7 +189,7 @@ export default function Index() {
               <ErrorMessage
                 name="description"
                 component="div"
-                className="error"
+                className="text-[#ff0000]"
               />
               <Field name="category_id">
                 {({ field }: any) => (
@@ -210,7 +211,7 @@ export default function Index() {
               <ErrorMessage
                 name="category_id"
                 component="div"
-                className="error"
+                className="text-[#ff0000]"
               />
               <Field name="file">
                 {({ field }: any) => (
@@ -225,8 +226,17 @@ export default function Index() {
                   </Upload>
                 )}
               </Field>
-              <ErrorMessage name="file" component="div" className="error" />
-              <Button type="primary" htmlType="submit" loading={isSubmitting}>
+              <ErrorMessage name="file" component="div" className="text-[#ff0000]" />
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isSubmitting}
+                style={{
+                  backgroundColor: "green",
+                  color: "white",
+                  borderColor: "green",
+                }}
+              >
                 Submit
               </Button>
             </Form>
@@ -244,7 +254,7 @@ export default function Index() {
         tbody={data}
         deletIdData={() => setConfirmOpen(true)}
       />
-      {totalItems > 0 ? (
+      {totalItems > 10 ? (
         <Pagination
           current={page}
           pageSize={10}

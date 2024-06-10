@@ -60,7 +60,7 @@ function BasicModal() {
     name: "",
   };
   const handleSubmit = async (value: any) => {
-    const res = await updateSubCategory(value, getDataFromCookie("Id"));
+    const res = await updateSubCategory(value, getDataFromCookie("subId"));
     if (res && res.status === 200) {
       handleClose();
     }
@@ -95,7 +95,7 @@ function BasicModal() {
                     size="small"
                     style={{ width: "100%" }}
                   />
-                  <ErrorMessage name="name" component="div" className="error" />
+                  <ErrorMessage name="name" component="div" className="text-[#ff0000]" />
                   <Button
                     variant="contained"
                     type="submit"

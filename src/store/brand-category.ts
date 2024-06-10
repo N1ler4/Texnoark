@@ -4,7 +4,7 @@ import http from "@http";
 const useBrandCategoryStore = create(() => ({
   postBrandCategory: async (payload: any) => {
     try {
-      const res = await http.post("/brand-category", payload);
+      const res = await http.post("/brand-category/create", payload);
       if (res.status === 201) {
         return res;
       }
@@ -12,9 +12,9 @@ const useBrandCategoryStore = create(() => ({
       console.log(err);
     }
   },
-  getBrandCategory: async (limit:any , page:any , search:any) => {
+  getBrandCategory: async (limit:any , page:any , id:any) => {
     try {
-      const res = await http.get(`/brand-category/search?search=${search}&limit=${limit}&page=${page}`);
+      const res = await http.get(`/brand-category/brand/${id}?limit=${limit}&page=${page}`);
       if (res.status === 200) {
         return res;
       }
@@ -24,7 +24,7 @@ const useBrandCategoryStore = create(() => ({
   },
   deleteBrandCategory: async (id: any) => {
     try{
-      const res = await http.delete(`/brand-category/${id}`)
+      const res = await http.delete(`/brand-category/delete/${id}`)
       if(res.status === 200){
         return res;
       }
@@ -35,7 +35,7 @@ const useBrandCategoryStore = create(() => ({
   },
   updateBrandCategory: async (value:any , id:any) =>{
     try{
-      const res = await http.patch(`/brand-category/${id}`, value)
+      const res = await http.patch(`/brand-category/update/${id}`, value)
       if(res.status === 200){
         return res;
       }

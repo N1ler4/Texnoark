@@ -5,20 +5,24 @@ import useBrandCategoryStore from "../../store/brand-category";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postCategorySchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
-import { useLocation, useNavigate } from "react-router-dom";
-
+import { useSearchParams } from "react-router-dom";
 const { Search } = Input;
 
-export default function Index() {
-  const navigate = useNavigate();
-  const { postBrandCategory, getBrandCategory, deleteBrandCategory } = useBrandCategoryStore();
-  const [data, setData] = useState<any>([]);
+interface PostData {
+  name: string;
+  brand_id: number;
+}
+
+const Index: React.FC = () => {
+  const { postBrandCategory, getBrandCategory, deleteBrandCategory } =
+    useBrandCategoryStore();
+  const [data, setData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
 
   const theader = [
     { title: "", name: "id" },
@@ -26,60 +30,78 @@ export default function Index() {
     { title: "Action", name: "brandcategory action" },
   ];
 
-  interface postData {
-    name: string;
-    brand_id: any;
-  }
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const initialValues = {
+  const initialValues: PostData = {
     name: "",
-    brand_id: Number(getDataFromCookie("BrandId"))
+    brand_id: Number(getDataFromCookie("BrandId")) || 0,
   };
 
-  const handleSubmit = async (value: postData) => {
-    const res = await postBrandCategory(value);
-    if (res && res.status === 201) {
-      handleClose();
-      getData(page, searchTerm);
+  const handleSubmit = async (values: PostData, { resetForm }: any) => {
+    try {
+      const res = await postBrandCategory(values);
+      if (res && res.status === 201) {
+        handleClose();
+        fetchData();
+        resetForm();
+      }
+    } catch (error) {
+      console.error("Failed to submit the form:", error);
     }
   };
 
-  const getData = async (page: number, search: string) => {
-    searchParams.set("page", String(page));
-    navigate(`?${searchParams.toString()}`);
-    const res = await getBrandCategory(10, page, search);
-    console.log(res);
-    if (res && res.status === 200) {
-      setData(res.data.data.brandCategories);
-      setTotalItems(res.data.data.count);
+  const fetchData = async () => {
+    try {
+      const res = await getBrandCategory(1000, 1, getDataFromCookie("BrandId"));
+      if (res && res.status === 200) {
+        setData(res.data.data.brandCategories);
+        setTotalItems(res.data.data.count);
+        filterData(res.data.data.brandCategories, searchTerm);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
     }
+  };
+
+  const filterData = (data: any[], search: string) => {
+    const filtered = data.filter((item) =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredData(filtered);
+    setTotalItems(filtered.length);
   };
 
   useEffect(() => {
-    getData(page, searchTerm);
-  }, [page, searchTerm]);
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    filterData(data, searchTerm);
+  }, [searchTerm, data]);
 
   const handleDelete = (id: string) => {
     Modal.confirm({
       title: "Are you sure you want to delete this Brand-category?",
       onOk: async () => {
-        await deleteBrandCategory(id);
-        getData(page, searchTerm);
-        deleteDataFromCookie("categoryId");
+        try {
+          await deleteBrandCategory(id);
+          fetchData();
+          deleteDataFromCookie("categoryId");
+        } catch (error) {
+          console.error("Failed to delete the brand category:", error);
+        }
       },
     });
   };
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setPage(1);
+    setSearchParams({ page: "1", search: value });
   };
 
   const handlePageChange = (page: number) => {
-    setPage(page);
+    setSearchParams({ page: String(page), search: searchTerm });
   };
 
   return (
@@ -97,7 +119,7 @@ export default function Index() {
           Add Brand Category
         </Button>
         <Search
-          placeholder="Search categories"
+          placeholder="Search brands categories"
           enterButton="Search"
           size="large"
           style={{ maxWidth: 300, marginBottom: 16 }}
@@ -106,7 +128,7 @@ export default function Index() {
       </div>
       <Modal
         title="Add New Brand Category"
-        visible={open}
+        open={open}
         onCancel={handleClose}
         footer={null}
       >
@@ -120,10 +142,14 @@ export default function Index() {
               <Field
                 name="name"
                 as={Input}
-                placeholder="Sub Category Name"
+                placeholder="Brand Category Name"
                 size="large"
               />
-              <ErrorMessage name="name" component="div" className="error" />
+              <ErrorMessage
+                name="name"
+                component="div"
+                className="text-[#ff0000]"
+              />
               <Button
                 type="primary"
                 htmlType="submit"
@@ -140,14 +166,22 @@ export default function Index() {
           )}
         </Formik>
       </Modal>
-      <GlobalTable theader={theader} tbody={data} deletIdData={handleDelete} />
-
-      <Pagination
-        current={page}
-        pageSize={10}
-        total={totalItems}
-        onChange={handlePageChange}
+      <GlobalTable
+        theader={theader}
+        tbody={filteredData}
+        deletIdData={handleDelete}
       />
+
+      {totalItems > 10 && (
+        <Pagination
+          current={page}
+          pageSize={10}
+          total={totalItems}
+          onChange={handlePageChange}
+        />
+      )}
     </>
   );
-}
+};
+
+export default Index;

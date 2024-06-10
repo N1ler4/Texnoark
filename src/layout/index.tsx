@@ -34,6 +34,18 @@ const ResponsiveDrawer = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const getCategoryName = (pathname: any) => {
+    if (pathname === "/main/brands") return "Brands";
+    if (pathname === "/main/brand-category") return "Brand Category";
+    if (pathname === "/main/sales") return "Sales";
+    if (pathname === "/main/settings") return "Settings";
+    if (pathname === "/main/product") return "Products";
+    if (pathname === "/main") return "Category";
+    if (/^\/main\/category\/\d+$/.test(pathname)) return "Subcategory";
+    if (/^\/main\/brands\/\d+$/.test(pathname)) return "Category Brands";
+    if (/^\/main\/product\/\d+$/.test(pathname)) return "Product Details";
+  };
+
   const drawer = (
     <div>
       <Toolbar />
@@ -83,7 +95,9 @@ const ResponsiveDrawer = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Responsive Drawer
+            <h1 className="text-[20px] text-white">
+              {getCategoryName(pathname) ? getCategoryName(pathname) : <div>Single Page</div>}
+            </h1>
           </Typography>
           <Typography>
             <Menu />

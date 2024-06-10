@@ -11,7 +11,8 @@ const { Search } = Input;
 
 export default function Index() {
   const navigate = useNavigate();
-  const { postSubCategory, getSubCategory, deleteSubCategory } = useSubCategoryStore();
+  const { postSubCategory, getSubCategory, deleteSubCategory } =
+    useSubCategoryStore();
   const [data, setData] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
@@ -36,7 +37,7 @@ export default function Index() {
 
   const initialValues = {
     name: "",
-    parent_category_id: Number(getDataFromCookie("Id"))
+    parent_category_id: Number(getDataFromCookie("Id")),
   };
 
   const handleSubmit = async (value: postData) => {
@@ -50,7 +51,7 @@ export default function Index() {
   const getData = async (page: number, search: string) => {
     searchParams.set("page", String(page));
     navigate(`?${searchParams.toString()}`);
-    const res = await getSubCategory(10, page, search , getDataFromCookie("Id"));
+    const res = await getSubCategory(10, page, search, getDataFromCookie("Id"));
     console.log(res);
     if (res && res.status === 200) {
       setData(res.data.data.subcategories);
@@ -97,7 +98,7 @@ export default function Index() {
           Add Sub Category
         </Button>
         <Search
-          placeholder="Search categories"
+          placeholder="Search sub-categories"
           enterButton="Search"
           size="large"
           style={{ maxWidth: 300, marginBottom: 16 }}
@@ -123,7 +124,7 @@ export default function Index() {
                 placeholder="Sub Category Name"
                 size="large"
               />
-              <ErrorMessage name="name" component="div" className="error" />
+              <ErrorMessage name="name" component="div" className="text-[#ff0000]" />
               <Button
                 type="primary"
                 htmlType="submit"
@@ -142,12 +143,16 @@ export default function Index() {
       </Modal>
       <GlobalTable theader={theader} tbody={data} deletIdData={handleDelete} />
 
-      <Pagination
-        current={page}
-        pageSize={10}
-        total={totalItems}
-        onChange={handlePageChange}
-      />
+      {totalItems > 10 ? (
+        <Pagination
+          current={page}
+          pageSize={10}
+          total={totalItems}
+          onChange={handlePageChange}
+        />
+      ) : (
+        console.log("No brands found")
+      )}
     </>
   );
 }

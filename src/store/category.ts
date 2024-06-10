@@ -4,7 +4,7 @@ import http from "@http";
 const useCategoryStore = create(() => ({
   postCategory: async (payload: any) => {
     try {
-      const res = await http.post("/category", payload);
+      const res = await http.post("/category/create", payload);
       if (res.status === 201) {
         return res;
       }
@@ -24,7 +24,7 @@ const useCategoryStore = create(() => ({
   },
   deleteCategory: async (id: any) => {
     try{
-      const res = await http.delete(`/category/${id}`)
+      const res = await http.delete(`/category/delete/${id}`)
       if(res.status === 200){
         return res;
       }
@@ -35,7 +35,7 @@ const useCategoryStore = create(() => ({
   },
   updateCategory: async (value:any , id:any) =>{
     try{
-      const res = await http.patch(`/category/${id}`, value)
+      const res = await http.patch(`/category/update/${id}`, value)
       if(res.status === 200){
         return res;
       }

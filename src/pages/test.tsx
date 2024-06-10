@@ -178,7 +178,7 @@ export default function Index() {
                 size="large"
                 style={{ width: "100%" }}
               />
-              <ErrorMessage name="name" component="div" className="error" />
+              <ErrorMessage name="name" component="div" className="text-[#ff0000]" />
               <Field
                 type="text"
                 name="description"
@@ -190,7 +190,7 @@ export default function Index() {
               <ErrorMessage
                 name="description"
                 component="div"
-                className="error"
+                className="text-[#ff0000]"
               />
               <Field name="category_id">
                 {({ field }: any) => (
@@ -212,7 +212,7 @@ export default function Index() {
               <ErrorMessage
                 name="category_id"
                 component="div"
-                className="error"
+                className="text-[#ff0000]"
               />
               <Field name="files">
                 {({ field }: any) => (
@@ -228,7 +228,7 @@ export default function Index() {
                   </Upload>
                 )}
               </Field>
-              <ErrorMessage name="files" component="div" className="error" />
+              <ErrorMessage name="files" component="div" className="text-[#ff0000]" />
               <Button type="primary" htmlType="submit" loading={isSubmitting}>
                 Submit
               </Button>

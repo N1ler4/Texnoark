@@ -6,10 +6,10 @@ const useAuthStore = create(() => ({
   signin: async (payload: any) => {
     try {
       const response = await http.post("/auth/sign-in", payload);
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log(response)
-        saveDataToCookie("token", response?.data?.data?.token);
-        saveDataToCookie("admin-id" , response?.data?.data?.admin.id)
+        saveDataToCookie("token", response?.data?.data?.tokens.access_token);
+        saveDataToCookie("admin-id" , response?.data?.data?.data.id)
         return response;
       }
     } catch (err) {

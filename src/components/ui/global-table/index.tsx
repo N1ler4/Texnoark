@@ -1,8 +1,15 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { saveDataToCookie } from "@token-service";
-import { BrandEdit, CategoryEdit, UpdateSub , UpdateBrandCategory} from "@components";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import {
+  BrandEdit,
+  CategoryEdit,
+  UpdateSub,
+  UpdateBrandCategory,
+  ProductUpdate,
+} from "@components";
+import { PlusCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { SideBar } from "@ui";
 
 function Index({ tbody, theader, deletIdData }: any) {
   const navigate = useNavigate();
@@ -63,13 +70,13 @@ function Index({ tbody, theader, deletIdData }: any) {
                       <button
                         onClick={() => {
                           handleDelete(item.id);
-                          saveDataToCookie("BrandId", item.id);
+                          saveDataToCookie("brandId", item.id);
                         }}
                         className="py-1 px-3 rounded-md bg-red-500 hover:bg-red-700 active:bg-red-500 duration-300  flex items-center gap-2"
                       >
                         <DeleteIcon />
                       </button>
-                      <div onClick={() => saveDataToCookie("Id", item.id)}>
+                      <div onClick={() => saveDataToCookie("brandId", item.id)}>
                         <BrandEdit />
                       </div>
                       <div
@@ -106,13 +113,62 @@ function Index({ tbody, theader, deletIdData }: any) {
                       >
                         <DeleteIcon />
                       </button>
-                      <div onClick={() => saveDataToCookie("brandCategoryId", item.id)}>
+                      <div
+                        onClick={() =>
+                          saveDataToCookie("brandCategoryId", item.id)
+                        }
+                      >
                         <UpdateBrandCategory />
                       </div>
                     </div>
+                  ) : item2.name === "product action" ? (
+                    <div className="w-full flex items-center justify-center gap-3">
+                      <button
+                        onClick={() => {
+                          handleDelete(item.id);
+                        }}
+                        className="py-1 px-3 rounded-md bg-red-500 hover:bg-red-700 active:bg-red-500 duration-300  flex items-center gap-2"
+                      >
+                        <DeleteIcon />
+                      </button>
+                      <div
+                        onClick={() => saveDataToCookie("productId", item.id)}
+                      >
+                        <ProductUpdate />
+                      </div>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => saveDataToCookie("productId", item.id)}
+                      >
+                        <SideBar />
+                      </div>
+                      <div className="cursor-pointer">
+                        <EyeOutlined
+                          className="text-[24px]"
+                          onClick={() => (
+                            saveDataToCookie("productId", item.id),
+                            navigate(`/main/product/${item.id}`)
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ) : item2.name === "description" ? (
+                    <p className="text-center">
+                      {item[item2.name].length > 40
+                        ? item[item2.name].slice(0, 40) + "..."
+                        : item[item2.name]}
+                    </p>
                   ) : item2.name === "id" ? (
                     <div className="w-full flex items-center justify-center">
                       <input type="checkbox" className=" w-4 h-4" />
+                    </div>
+                  ) : item2.name === "image" ? (
+                    <div className="grid justify-center">
+                      <img
+                        className="w-[120px] h-[40px] object-contain"
+                        src={item?.image}
+                        alt="brand logo"
+                      />
                     </div>
                   ) : (
                     <p className=" text-center">{item[item2.name]}</p>

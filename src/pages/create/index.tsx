@@ -53,7 +53,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="first_name" component="div" className="error" />
+              <ErrorMessage name="first_name" component="div" className="text-[#ff0000]" />
               <Field
                 type="text"
                 name="last_name"
@@ -63,7 +63,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="last_name" component="div" className="error" />
+              <ErrorMessage name="last_name" component="div" className="text-[#ff0000]" />
               <Field
                 type="text"
                 name="phone_number"
@@ -73,7 +73,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="phone_number" component="div" className="error" />
+              <ErrorMessage name="phone_number" component="div" className="text-[#ff0000]" />
               <Field
                 type="email"
                 name="email"
@@ -83,7 +83,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="email" component="div" className="error" />
+              <ErrorMessage name="email" component="div" className="text-[#ff0000]" />
 
               <Field
                 type="password"
@@ -94,7 +94,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="password" component="div" className="error" />
+              <ErrorMessage name="password" component="div" className="text-[#ff0000]" />
 
               <Button variant="outlined" type="submit" disabled={isSubmitting}>
                 Submit

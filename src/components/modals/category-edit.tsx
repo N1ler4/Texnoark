@@ -23,7 +23,7 @@ const theme = createTheme({
       main: "#008000",
       light: "#E9DB5D",
       dark: "#355E3B",
-      contrastText: "#000",
+      contrastText: "#fff",
     },
     secondary: {
       main: "#355E3B",
@@ -91,7 +91,7 @@ function BasicModal() {
                   <ErrorMessage
                     name="name"
                     component="div"
-                    className="error"
+                    className="text-[#ff0000]"
                   />
                   <Button
                     variant="contained"

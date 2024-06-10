@@ -20,7 +20,7 @@ export default function index() {
 
   const handleSubmit = async (value: Login) => {
     const res = await signin(value);
-    if (res && res.status === 200) {
+    if (res && res.status === 201) {
       navigate("/main");
     }
   };
@@ -46,7 +46,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="phone_number" component="div" className="error" />
+              <ErrorMessage name="phone_number" component="div" className="text-[#ff0000]" />
 
               <Field
                 type="password"
@@ -57,7 +57,7 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="password" component="div" className="error" />
+              <ErrorMessage name="password" component="div" className="text-[#ff0000]" />
 
               <Button variant="outlined" type="submit" disabled={isSubmitting}>
                 Submit
