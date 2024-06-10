@@ -12,9 +12,10 @@ http.interceptors.request.use((config) => {
   }
   return config;
 });
+
 async function refreshAccessToken() {
   try {
-    const refresh_token = getDataFromCookie("admin_id");
+    const refresh_token = Number(getDataFromCookie("admin-id"));
     if (!refresh_token) {
       throw new Error("Refresh token not found");
     }
@@ -24,25 +25,34 @@ async function refreshAccessToken() {
     const { access_token } = response.data.data.tokens;
     saveDataToCookie("token", access_token);
     return access_token;
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.error("Failed to refresh access token:", error);
+    throw error;
   }
 }
+
 http.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
     if (error.response && error.response.status === 401) {
-      const access_token = await refreshAccessToken();
-      if (access_token) {
-        const originalRequest = error.config;
-        originalRequest.headers["Authorization"] = access_token;
-      } else {
-        console.error("Failed to refresh access token");
-        return Promise.reject(error);
+      try {
+        const access_token = await refreshAccessToken();
+        if (access_token) {
+          const originalRequest = error.config;
+          originalRequest.headers.Authorization = access_token;
+          return axios(originalRequest);
+        } else {
+          console.error("Failed to refresh access token");
+          return Promise.reject(error);
+        }
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
       }
     }
+    return Promise.reject(error);
   }
 );
+
 export default http;

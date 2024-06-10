@@ -3,11 +3,16 @@ import { useEffect, useState } from "react";
 import { getDataFromCookie } from "@token-service";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
+import { SideBar } from "@ui";
+import { useNavigate } from "react-router-dom";
 
 const ProductDetail = () => {
-  const [product, setProduct] = useState<any>(null);
-  console.log(product)
+  const [productDetail, setProductDetail] = useState<any>(null);
+  const [product, setProduct] = useState<any>([]);
+  console.log(product);
+  console.log(productDetail);
   const [images, setImages] = useState([]);
+  const navigate = useNavigate();
 
   const { getProductDetail } = useProductDetailStore();
 
@@ -17,12 +22,16 @@ const ProductDetail = () => {
     const res = await getProductDetail(Id);
     console.log(res);
     if (res && res.status === 200) {
-      setProduct(res.data.data);
-      if (res?.data?.image_url) {
-        const imgArray = res.data.images.map((url: string) => ({
-          original: url,
-          thumbnail: url,
-        }));
+      setProduct(res?.data?.data.product);
+      setProductDetail(res.data.data.product_detail);
+      if (res?.data?.data?.product_detail) {
+        const imgArray = res.data.data.product_detail.images.map(
+          (url: string) => ({
+            original: url,
+            thumbnail: url,
+          })
+        );
+        console.log(imgArray);
         setImages(imgArray);
       }
     }
@@ -32,7 +41,7 @@ const ProductDetail = () => {
   }, []);
   return (
     <div>
-      {product && (
+      {productDetail && product ? (
         <div className="mt-[60px] flex items-center justify-around">
           <div className="w-[600px]">
             <ImageGallery items={images} />
@@ -45,64 +54,60 @@ const ProductDetail = () => {
                 color: "#444",
               }}
             >
-              {product.product_name}
+              {product.name}
             </h2>
-            <div className="flex gap-3">
-              <p>
-                <strong style={{ color: "#9388" }}>Available Age:</strong>{" "}
-                <div className="flex items-center text-[24px]">
-                  {" "}
-                  <div className="text-purple-600">
-                    {product.age_min}
-                    <span>-</span>
-                    {product.age_max}
-                  </div>
-                </div>
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <p>
-                <strong style={{ color: "#9388" }}>Size:</strong>
-                <div className="text-purple-600">{product.size}</div>
-              </p>
-              <p>
-                <strong style={{ color: "#9388" }}>Gender:</strong>{" "}
-                <div className="text-purple-600">{product.for_gender}</div>
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <p>
-                <strong style={{ color: "#9388" }}>Color:</strong>{" "}
-                <div className="text-purple-600">{product.color}</div>
-              </p>
-              <p>
-                <strong style={{ color: "#9388" }}>Made In:</strong>{" "}
-                <div className="text-purple-600">{product.made_in}</div>
-              </p>
-            </div>
-
             <p>
               <strong style={{ color: "#9388" }}>Description:</strong>{" "}
               <div className="text-purple-600 max-w-[400px]">
-                {product.description}
+                {productDetail.description}
+              </div>
+            </p>
+            <p>
+              <strong style={{ color: "#9388" }}>Colors:</strong>{" "}
+              <div className="text-purple-600 max-w-[400px] flex gap-2">
+                {productDetail.colors.map((color:any, index:any) => (
+                  <p key={index}>{color},</p>
+                ))}
+              </div>
+            </p>
+            <p>
+              <strong style={{ color: "#9388" }}>Quantity:</strong>{" "}
+              <div className="text-purple-600 max-w-[400px]">
+                {productDetail.quantity}
               </div>
             </p>
             <p>
               <strong style={{ color: "#9388" }}>Count:</strong>
               <br />
-              <div className="text-green-400 text-[24px]">{product.count}</div>
+              <div className="text-green-400 text-[24px]">
+                {productDetail.quantity}
+              </div>
             </p>
             <p>
               <strong style={{ color: "#9388" }}>Price:</strong>
               <br />
               <div className="text-[24px] flex gap-5 items-center">
-                {Math.floor(product.cost / product.discount) + "$"}{" "}
+                {Math.floor(product.price / productDetail.discount) + "$"}{" "}
                 <p className="text-[16px] line-through text-[#6b6b6b]">
-                  {product.cost}$
+                  {product.price}$
                 </p>
               </div>
             </p>
           </div>
+          <button
+            onClick={() => navigate(`/main/product`)}
+            className="absolute left-[260px] top-[70px] text-[32px]"
+          >
+            Back
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-between items-center">
+          <button className="text-[32px]" onClick={() => window.history.back()}>
+            Back
+          </button>
+          <h1>Please Enter Product Details</h1>
+          {<SideBar />}
         </div>
       )}
     </div>

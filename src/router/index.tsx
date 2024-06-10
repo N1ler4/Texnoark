@@ -16,6 +16,7 @@ import {
   SingleBrand,
   Product,
   ProductDetail,
+  Stock,
 } from "@pages";
 import MainLayout from "@layout";
 
@@ -32,6 +33,7 @@ export default function Router() {
           <Route path="brands/:id" element={<SingleBrand />} />
           <Route path="product" element={<Product />} />
           <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="stock" element={<Stock />} />
           <Route path="settings" element={<Settings />} />
           {/* <Route path="*" element={<Error />} /> */}
         </Route>

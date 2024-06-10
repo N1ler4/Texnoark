@@ -55,6 +55,7 @@ const App: React.FC = () => {
       if (res && res.status === 201) {
         Notification.success("Success!", "Product added successfully");
         onClose();
+        window.location.reload()
       }
     } catch (error) {
       Notification.error("Error!", `${error}`);

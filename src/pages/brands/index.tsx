@@ -13,7 +13,7 @@ import useBrandStore from "../../store/brand";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postBrandSchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
-import { ConfirmModal } from "@components";
+import { ConfirmModal, Notification } from "@components";
 import useCategoryStore from "../../store/category";
 import { UploadOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -71,7 +71,8 @@ export default function Index() {
       if (res && res.status === 201) {
         handleClose();
         setReload(!reload);
-        message.success("Brand added successfully");
+        Notification.success("Success!", "Successfully added category");
+
       }
     } catch (error) {
       console.error("Failed to post brand:", error);
@@ -185,6 +186,7 @@ export default function Index() {
                 placeholder="Brand Description"
                 size="large"
                 style={{ width: "100%" }}
+                
               />
               <ErrorMessage
                 name="description"
@@ -199,6 +201,16 @@ export default function Index() {
                     placeholder="Choose a category"
                     size="large"
                     style={{ width: "100%" }}
+                    showSearch 
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option && option.children
+                        ? option.children
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) !== -1
+                        : false
+                    } 
                   >
                     {categoryId.map((item: any) => (
                       <Select.Option key={item.id} value={item.id}>

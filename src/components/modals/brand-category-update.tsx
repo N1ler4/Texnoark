@@ -7,6 +7,7 @@ import useBrandCategoryStore from "../../store/brand-category";
 import { getDataFromCookie } from "@token-service";
 import useBrandStore from "../../store/brand";
 import { Select, Modal, Input, Button } from "antd";
+import Notification from "../ui/notification";
 
 const theme = createTheme({
   palette: {
@@ -55,6 +56,7 @@ function BasicModal() {
     );
     if (res && res.status === 200) {
       handleClose();
+      Notification.success("Success!", "Successfully added category");
     }
   };
 

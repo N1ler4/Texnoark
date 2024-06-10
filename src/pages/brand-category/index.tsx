@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Pagination } from "antd";
-import { GlobalTable } from "@ui";
+import { GlobalTable, Notification } from "@ui";
 import useBrandCategoryStore from "../../store/brand-category";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postCategorySchema } from "@validation";
@@ -43,6 +43,7 @@ const Index: React.FC = () => {
       const res = await postBrandCategory(values);
       if (res && res.status === 201) {
         handleClose();
+        Notification.success("Success!", "Successfully added category");
         fetchData();
         resetForm();
       }

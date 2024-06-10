@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { createTheme, ThemeProvider, Button as MuiButton } from "@mui/material";
-import { postProductSchema } from "@validation";
+import { stockSchema } from "@validation";
 import { ErrorMessage, Field, Formik, Form } from "formik";
 import EditIcon from "@mui/icons-material/Edit";
-import { deleteDataFromCookie, getDataFromCookie, saveDataToCookie } from "@token-service";
+import {
+  getDataFromCookie,
+  saveDataToCookie,
+} from "@token-service";
 import useCategoryStore from "../../store/category";
 import useBrandStore from "../../store/brand";
-import useBrandCategoryStore from "../../store/brand-category";
 import useProductStore from "../../store/product";
 import { Input, Select, Button, Modal } from "antd";
+import useStockStore from "../../store/stock";
+import Notification from "../ui/notification";
 
 const theme = createTheme({
   palette: {
@@ -37,19 +41,17 @@ const theme = createTheme({
 });
 
 interface FormValues {
-  name: string;
-  price: number;
-  category_id: string;
-  brand_category_id: string;
-  brand_id: string;
+  quantity: number;
+  category_id: number;
+  product_id: number;
+  brand_id: number;
 }
 
 const initialValues: FormValues = {
-  name: "",
-  price: 0,
-  category_id: "",
-  brand_category_id: "",
-  brand_id: "",
+    category_id: 0,
+    brand_id: 0,
+    product_id: 0,
+    quantity: 0,
 };
 
 function BasicModal() {
@@ -58,27 +60,26 @@ function BasicModal() {
   const [brandId, setBrandId] = useState<any[]>([]);
   const [brandCategoryId, setBrandCategoryId] = useState<any[]>([]);
   const { getCategory } = useCategoryStore();
-  const { getBrand, getSingleBrand } = useBrandStore();
-  const { updateProduct } = useProductStore();
-  const [reload, setReload] = useState(false); 
-
+  const { getBrand } = useBrandStore();
+  const {getProduct} = useProductStore();
+  const [reload, setReload] = useState(false);
+  const { updateStock } = useStockStore();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      const res = await updateProduct(values, getDataFromCookie("productId"));
+      const res = await updateStock(values, getDataFromCookie("stockId"));
       if (res && res.status === 200) {
         handleClose();
-        deleteDataFromCookie("brand_id")
+      Notification.success("Success!", "Successfully added category");
       }
     } catch (error) {
-      console.error("Failed to update product", error);
+      console.error("Failed to update stock", error);
     }
   };
 
-  const Id = Number(getDataFromCookie("brand_id"));
 
   const getData = async () => {
     try {
@@ -90,9 +91,10 @@ function BasicModal() {
       if (response2 && response2.status === 200) {
         setBrandId(response2.data.data.brands);
       }
-      const response3 = await getSingleBrand(Id, 100, 1);
+      const response3 = await getProduct(100, 1, "");
       if (response3 && response3.status === 200) {
-        setBrandCategoryId(response3?.data?.data?.brandCategories);
+        console.log(response3);
+        setBrandCategoryId(response3?.data?.data?.products);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -110,7 +112,7 @@ function BasicModal() {
           <EditIcon />
         </MuiButton>
         <Modal
-          title="Add New Product"
+          title="Update Stock"
           visible={open}
           onCancel={handleClose}
           footer={null}
@@ -118,33 +120,10 @@ function BasicModal() {
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
-            validationSchema={postProductSchema}
+            validationSchema={stockSchema}
           >
             {({ isSubmitting, setFieldValue, values }) => (
               <Form className="flex flex-col gap-5">
-                <Field
-                  name="name"
-                  as={Input}
-                  placeholder="Product Name"
-                  size="large"
-                />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="text-[#ff0000]"
-                />
-                <Field
-                  type="number"
-                  name="price"
-                  as={Input}
-                  placeholder="Price"
-                  size="large"
-                />
-                <ErrorMessage
-                  name="price"
-                  component="div"
-                  className="text-[#ff0000]"
-                />
                 <Field name="brand_id">
                   {({ field }: any) => (
                     <Select
@@ -152,7 +131,6 @@ function BasicModal() {
                       onChange={(value) => {
                         setFieldValue("brand_id", value);
                         saveDataToCookie("brand_id", value);
-                        console.log(value)
                         setReload(!reload);
                       }}
                       value={values.brand_id || undefined}
@@ -160,6 +138,16 @@ function BasicModal() {
                       size="large"
                       allowClear
                       style={{ width: "100%" }}
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option && option.children
+                          ? option.children
+                              .toString()
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) !== -1
+                          : false
+                      }
                     >
                       {brandId?.map((item: any) => (
                         <Select.Option key={item.id} value={item.id}>
@@ -169,10 +157,11 @@ function BasicModal() {
                     </Select>
                   )}
                 </Field>
+
                 <ErrorMessage
                   name="brand_id"
                   component="div"
-                  className="text-[#ff0000]"
+                  className="text-red-700"
                 />
                 <Field name="category_id">
                   {({ field }: any) => (
@@ -184,8 +173,18 @@ function BasicModal() {
                       size="large"
                       allowClear
                       style={{ width: "100%" }}
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option && option.children
+                          ? option.children
+                              .toString()
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) !== -1
+                          : false
+                      }
                     >
-                      {categoryId.map((item: any) => (
+                      {categoryId?.map((item: any) => (
                         <Select.Option key={item.id} value={item.id}>
                           {item.name}
                         </Select.Option>
@@ -196,22 +195,30 @@ function BasicModal() {
                 <ErrorMessage
                   name="category_id"
                   component="div"
-                  className="text-[#ff0000]"
+                  className="text-red-700"
                 />
-                <Field name="brand_category_id">
+                <Field name="product_id">
                   {({ field }: any) => (
                     <Select
                       {...field}
-                      onChange={(value) =>
-                        setFieldValue("brand_category_id", value)
-                      }
-                      value={values.brand_category_id || undefined}
-                      placeholder="Choose a brand category"
+                      onChange={(value) => setFieldValue("product_id", value)}
+                      value={values.product_id || undefined}
+                      placeholder="Choose a brand product..."
                       size="large"
                       allowClear
                       style={{ width: "100%" }}
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option && option.children
+                          ? option.children
+                              .toString()
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) !== -1
+                          : false
+                      }
                     >
-                      {brandCategoryId.map((item: any) => (
+                      {brandCategoryId?.map((item: any) => (
                         <Select.Option key={item.id} value={item.id}>
                           {item.name}
                         </Select.Option>
@@ -220,9 +227,21 @@ function BasicModal() {
                   )}
                 </Field>
                 <ErrorMessage
-                  name="brand_category_id"
+                  name="product_id"
                   component="div"
-                  className="text-[#ff0000]"
+                  className="text-red-700"
+                />
+                <Field
+                  type="number"
+                  name="quantity"
+                  as={Input}
+                  placeholder="Quantity"
+                  size="large"
+                />
+                <ErrorMessage
+                  name="quantity"
+                  component="div"
+                  className="text-red-700"
                 />
                 <Button
                   type="primary"

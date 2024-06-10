@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Pagination } from "antd";
-import { GlobalTable } from "@ui";
+import { GlobalTable, Notification } from "@ui";
 import useSubCategoryStore from "../../store/sub-category";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postCategorySchema } from "@validation";
@@ -44,6 +44,7 @@ export default function Index() {
     const res = await postSubCategory(value);
     if (res && res.status === 201) {
       handleClose();
+      Notification.success("Success!", "Successfully added category");
       getData(page, searchTerm);
     }
   };

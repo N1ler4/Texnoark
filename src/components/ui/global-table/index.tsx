@@ -6,10 +6,10 @@ import {
   UpdateSub,
   UpdateBrandCategory,
   ProductUpdate,
+  Stock,
 } from "@components";
-import { PlusCircleOutlined, EyeOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { SideBar } from "@ui";
 
 function Index({ tbody, theader, deletIdData }: any) {
   const navigate = useNavigate();
@@ -103,6 +103,20 @@ function Index({ tbody, theader, deletIdData }: any) {
                         <UpdateSub />
                       </div>
                     </div>
+                  ) : item2.name === "stock action" ? (
+                    <div className="w-full flex items-center justify-center gap-1">
+                      <button
+                        onClick={() => {
+                          handleDelete(item.id);
+                        }}
+                        className="py-1 px-3 rounded-md bg-red-500 hover:bg-red-700 active:bg-red-500 duration-300  flex items-center gap-2"
+                      >
+                        <DeleteIcon />
+                      </button>
+                      <div onClick={() => saveDataToCookie("stockId", item.id)}>
+                        <Stock />
+                      </div>
+                    </div>
                   ) : item2.name === "brandcategory action" ? (
                     <div className="w-full flex items-center justify-center gap-1">
                       <button
@@ -138,24 +152,24 @@ function Index({ tbody, theader, deletIdData }: any) {
                       </div>
                       <div
                         className="cursor-pointer"
-                        onClick={() => saveDataToCookie("productId", item.id)}
+                        onClick={() => (
+                          navigate(`/main/product/${item.id}`),
+                          saveDataToCookie("productId", item.id)
+                        )}
                       >
-                        <SideBar />
-                      </div>
-                      <div className="cursor-pointer">
-                        <EyeOutlined
-                          className="text-[24px]"
-                          onClick={() => (
-                            saveDataToCookie("productId", item.id),
-                            navigate(`/main/product/${item.id}`)
-                          )}
-                        />
+                        <PlusCircleOutlined className="text-[24px]" />
                       </div>
                     </div>
                   ) : item2.name === "description" ? (
                     <p className="text-center">
                       {item[item2.name].length > 40
                         ? item[item2.name].slice(0, 40) + "..."
+                        : item[item2.name]}
+                    </p>
+                  ) : item2.name === "createdAt" ? (
+                    <p className="text-center">
+                      {item[item2.name].length > 10
+                        ? item[item2.name].slice(0, 10)
                         : item[item2.name]}
                     </p>
                   ) : item2.name === "id" ? (

@@ -1,73 +1,73 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Pagination, Select } from "antd";
 import { GlobalTable, Notification } from "@ui";
-import useProductStore from "../../store/product";
+import useStockStore from "../../store/stock";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { postProductSchema } from "@validation";
-import {
-  deleteDataFromCookie,
-  getDataFromCookie,
-  saveDataToCookie,
-} from "@token-service";
+import { stockSchema } from "@validation";
+import { deleteDataFromCookie, saveDataToCookie } from "@token-service";
 import { useLocation, useNavigate } from "react-router-dom";
 import useCategoryStore from "../../store/category";
 import useBrandStore from "../../store/brand";
-
-const { Search } = Input;
+import useProductStore from "../../store/product";
 
 export default function Index() {
   const navigate = useNavigate();
   const { getCategory } = useCategoryStore();
-  const { getBrand, getSingleBrand } = useBrandStore();
-  const { postProduct, getProduct, deleteProduct } = useProductStore();
+  const { getBrand } = useBrandStore();
+  const { getProduct } = useProductStore();
+  const { postStock, getStock, deleteStock } = useStockStore();
   const [data, setData] = useState<any[]>([]);
   const [categoryId, setCategoryId] = useState<any[]>([]);
   const [brandId, setBrandId] = useState<any[]>([]);
   const [brandCategoryId, setBrandCategoryId] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [reload, setReload] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const theader = [
     { title: "", name: "id" },
-    { title: "Product name", name: "name" },
-    { title: "Price", name: "price" },
-    { title: "Action", name: "product action" },
+    { title: "Brand ID", name: "brand_id" },
+    { title: "Created At", name: "createdAt" },
+    { title: "Quantity", name: "quantity" },
+    { title: "Action", name: "stock action" },
   ];
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const initialValues = {
-    name: "",
-    price: "",
-    category_id: "",
-    brand_category_id: "",
-    brand_id: "",
+    category_id: 0,
+    brand_id: 0,
+    product_id: 0,
+    quantity: 0,
   };
 
   const handleSubmit = async (value: any) => {
-    const res = await postProduct(value);
+    const res = await postStock(value);
     if (res && res.status === 201) {
       handleClose();
-      getData(page, searchTerm);
+      getData(page);
       deleteDataFromCookie("brand_id");
-      Notification.success("Success!", "Successfully added Product");
+      Notification.success("Success!", "Successfully added on Stock");
     }
   };
 
-  const Id = Number(getDataFromCookie("brand_id"));
-
-  const getData = async (page: number, search: string) => {
+  const getData = async (page: number) => {
     searchParams.set("page", String(page));
     navigate(`?${searchParams.toString()}`);
-    const res = await getProduct(10, page, search);
+    const res = await getStock(10, page);
     if (res && res.status === 200) {
-      setData(res.data.data.products);
+      let filteredData = res.data.data.stocks;
+      if (searchTerm) {
+        filteredData = filteredData.filter((item:any) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      setData(filteredData);
       setTotalItems(res.data.data.count);
     }
     const response = await getCategory(10, page, "");
@@ -78,32 +78,26 @@ export default function Index() {
     if (response2 && response2.status === 200) {
       setBrandId(response2?.data?.data?.brands);
     }
-    const response3 = await getSingleBrand(Id, 100, page);
+    const response3 = await getProduct(10, page, "");
     if (response3 && response3.status === 200) {
-      console.log(response3);
-      setBrandCategoryId(response3?.data?.data?.brandCategories);
+      setBrandCategoryId(response3?.data?.data?.products);
     }
   };
 
   useEffect(() => {
-    getData(page, searchTerm);
-  }, [page, searchTerm, reload]);
+    getData(page);
+  }, [page, reload]);
 
   const handleDelete = (id: string) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this Product?",
+      title: "Are you sure you want to delete this Stock?",
       onOk: async () => {
-        await deleteProduct(id);
-        getData(page, searchTerm);
+        await deleteStock(id);
+        getData(page);
         deleteDataFromCookie("ProductId");
         Notification.success("Success!", "Successfully deleted Product");
       },
     });
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -124,12 +118,15 @@ export default function Index() {
         >
           Add Product
         </Button>
-        <Search
+        <Input.Search
           placeholder="Search products..."
           enterButton="Search"
           size="large"
           style={{ maxWidth: 300, marginBottom: 16 }}
-          onSearch={handleSearch}
+          onSearch={(value) => {
+            setSearchTerm(value);
+            setPage(1);
+          }}
         />
       </div>
       <Modal
@@ -141,33 +138,10 @@ export default function Index() {
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
-          validationSchema={postProductSchema}
+          validationSchema={stockSchema}
         >
           {({ isSubmitting, setFieldValue, values }) => (
             <Form className="flex flex-col gap-5">
-              <Field
-                name="name"
-                as={Input}
-                placeholder="Product Name"
-                size="large"
-              />
-              <ErrorMessage
-                name="name"
-                component="div"
-                className="text-red-700"
-              />
-              <Field
-                type="number"
-                name="price"
-                as={Input}
-                placeholder="Price"
-                size="large"
-              />
-              <ErrorMessage
-                name="price"
-                component="div"
-                className="text-red-700"
-              />
               <Field name="brand_id">
                 {({ field }: any) => (
                   <Select
@@ -182,7 +156,7 @@ export default function Index() {
                     size="large"
                     allowClear
                     style={{ width: "100%" }}
-                    showSearch 
+                    showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       option && option.children
@@ -191,7 +165,7 @@ export default function Index() {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) !== -1
                         : false
-                    } 
+                    }
                   >
                     {brandId?.map((item: any) => (
                       <Select.Option key={item.id} value={item.id}>
@@ -201,6 +175,7 @@ export default function Index() {
                   </Select>
                 )}
               </Field>
+
               <ErrorMessage
                 name="brand_id"
                 component="div"
@@ -216,7 +191,7 @@ export default function Index() {
                     size="large"
                     allowClear
                     style={{ width: "100%" }}
-                    showSearch 
+                    showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       option && option.children
@@ -225,7 +200,7 @@ export default function Index() {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) !== -1
                         : false
-                    } 
+                    }
                   >
                     {categoryId?.map((item: any) => (
                       <Select.Option key={item.id} value={item.id}>
@@ -240,15 +215,13 @@ export default function Index() {
                 component="div"
                 className="text-red-700"
               />
-              <Field name="brand_category_id">
+              <Field name="product_id">
                 {({ field }: any) => (
                   <Select
                     {...field}
-                    onChange={(value) =>
-                      setFieldValue("brand_category_id", value)
-                    }
-                    value={values.brand_category_id || undefined}
-                    placeholder="Choose a brand category"
+                    onChange={(value) => setFieldValue("product_id", value)}
+                    value={values.product_id || undefined}
+                    placeholder="Choose a brand product..."
                     size="large"
                     allowClear
                     style={{ width: "100%" }}
@@ -272,7 +245,19 @@ export default function Index() {
                 )}
               </Field>
               <ErrorMessage
-                name="brand_category_id"
+                name="product_id"
+                component="div"
+                className="text-red-700"
+              />
+              <Field
+                type="number"
+                name="quantity"
+                as={Input}
+                placeholder="Quantity"
+                size="large"
+              />
+              <ErrorMessage
+                name="quantity"
                 component="div"
                 className="text-red-700"
               />

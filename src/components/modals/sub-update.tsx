@@ -12,6 +12,7 @@ import { ErrorMessage, Field, Formik, Form } from "formik";
 import EditIcon from "@mui/icons-material/Edit";
 import useSubCategoryStore from "../../store/sub-category";
 import { getDataFromCookie } from "@token-service";
+import Notification from "../ui/notification";
 
 const style = {
   position: "absolute",
@@ -63,6 +64,7 @@ function BasicModal() {
     const res = await updateSubCategory(value, getDataFromCookie("subId"));
     if (res && res.status === 200) {
       handleClose();
+      Notification.success("Success!", "Successfully added category");
     }
   };
 

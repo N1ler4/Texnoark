@@ -1,14 +1,16 @@
 import { Button } from "antd";
 import useAuthStore from "@store";
 import "./style.css";
-import { getDataFromCookie } from "@token-service";
+import { getDataFromCookie, saveDataToCookie } from "@token-service";
 import { useEffect, useState } from "react";
 import { ConfirmModal } from "@components";
 import { useNavigate } from "react-router-dom";
+import { UpdateAdmin } from "@components";
 
 export default function Profile() {
   const { getadmin, deleteadmin } = useAuthStore();
   const [data, setData] = useState<any>({});
+  console.log(data)
   const navigate = useNavigate()
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -109,8 +111,8 @@ export default function Profile() {
           </div>
           <div className="face face2">
             <div className="flex flex-col gap-3">
-              <Button type="primary" onClick={() => alert("Not working")}>
-                Edit Profile
+              <Button type="primary">
+                <UpdateAdmin/>
               </Button>
               <Button type="primary" onClick={() => handleOpenModal()}>
                 Delete Profile

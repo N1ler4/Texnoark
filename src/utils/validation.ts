@@ -33,4 +33,6 @@ export const postProductSchema = Yup.object().shape({
   name: Yup.string().required("Please enter name"),
   price: Yup.number().required("Please enter price"),
 })
-
+export const stockSchema = Yup.object().shape({
+  quantity : Yup.number().required("Please enter quantity")
+})
