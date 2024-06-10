@@ -5,48 +5,41 @@ const http = axios.create({
   baseURL: "https://ecomapi.ilyosbekdev.uz",
 });
 
-async function refreshAccsesToken() {
-  try {
-    const admin_id = getDataFromCookie("admin-id");
-
-    if (!admin_id) {
-      throw new Error("Refresh token not found in cookie ");
-    } else {
-      const response: any = await axios.get(
-        `https://ecomapi.ilyosbekdev.uz/auth/refresh/${admin_id}`
-      );
-      const { access_token, refresh_token } = response?.data?.data?.tokens;
-      saveDataToCookie("token", access_token);
-      saveDataToCookie("refresh_token", refresh_token);
-      return access_token;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 http.interceptors.request.use((config) => {
-  const access_token = getDataFromCookie("access_token");
-  if (access_token) {
-    config.headers["Authorization"] = `Bearer ${access_token}`;
+  let token = getDataFromCookie("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
-
+async function refreshAccessToken() {
+  try {
+    const refresh_token = getDataFromCookie("admin-id");
+    if (!refresh_token) {
+      throw new Error("Refresh token not found");
+    }
+    const response = await axios.get(
+      `https://ecomapi.ilyosbekdev.uz/auth/refresh/${refresh_token}`
+    );
+    const { access_token } = response.data.data.tokens;
+    saveDataToCookie("token", access_token);
+    return access_token;
+  } catch (err) {
+    console.log(err);
+  }
+}
 http.interceptors.response.use(
-  (response: any) => {
+  (response) => {
     return response;
   },
-  async (error: any) => {
+  async (error) => {
     if (error.response && error.response.status === 401) {
-      const access_token = await refreshAccsesToken();
-      //    console.log(access_token);
-
+      const access_token = await refreshAccessToken();
       if (access_token) {
         const originalRequest = error.config;
         originalRequest.headers["Authorization"] = access_token;
       } else {
-        console.error("Access token not found in config file " + error.config);
+        console.error("Failed to refresh access token");
         return Promise.reject(error);
       }
     }
