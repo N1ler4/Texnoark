@@ -3,6 +3,7 @@ import { loginSchema } from "@validation";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import useAuthStore from "@store";
 import { useNavigate } from "react-router-dom";
+import { useMask } from "@react-input/mask";
 
 export default function index() {
   const { signin } = useAuthStore();
@@ -13,13 +14,23 @@ export default function index() {
     password: string;
   }
 
+  const inputRef = useMask({
+    mask: "+998 (__) ___-__-__",
+    replacement: { _: /\d/ },
+  });
+
   const initialValues = {
     phone_number: "",
     password: "",
   };
 
   const handleSubmit = async (value: Login) => {
-    const res = await signin(value);
+    const formattedphone_number = value.phone_number.replace(/[\s()-]/g, "");
+    const formattedValues = {
+      ...value,
+      phone_number: formattedphone_number,
+    };
+    const res = await signin(formattedValues);
     if (res && res.status === 201) {
       navigate("/main");
     }
@@ -45,8 +56,13 @@ export default function index() {
                 placeholder="Phone Number"
                 size="small"
                 style={{ width: "400px" }}
+                inputRef={inputRef}
               />
-              <ErrorMessage name="phone_number" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="phone_number"
+                component="div"
+                className="text-[#ff0000]"
+              />
 
               <Field
                 type="password"
@@ -57,7 +73,11 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="password" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-[#ff0000]"
+              />
 
               <Button variant="outlined" type="submit" disabled={isSubmitting}>
                 Submit
@@ -65,7 +85,12 @@ export default function index() {
             </Form>
           )}
         </Formik>
-        <span className="text-blue-700 cursor-pointer" onClick={()=>(navigate("/signup"))}>Add new admin</span>
+        <span
+          className="text-blue-700 cursor-pointer"
+          onClick={() => navigate("/signup")}
+        >
+          Add new admin
+        </span>
       </div>
     </div>
   );

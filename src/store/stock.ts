@@ -22,6 +22,16 @@ const useStockStore = create(() => ({
       console.log(err);
     }
   },
+  getBrandStock: async (id:any) => {
+    try {
+      const res = await http.get(`/stock/brand/${id}`);
+      if (res.status === 200) {
+        return res;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
   deleteStock: async (id: any) => {
     try {
       const res = await http.delete(`/stock/delete/${id}`);

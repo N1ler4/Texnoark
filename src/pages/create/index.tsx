@@ -3,6 +3,7 @@ import { signUpSchema } from "@validation";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import useAuthStore from "@store";
 import { useNavigate } from "react-router-dom";
+import { useMask } from "@react-input/mask";
 
 export default function index() {
   const { signup } = useAuthStore();
@@ -24,8 +25,18 @@ export default function index() {
     password: "",
   };
 
+  const inputRef = useMask({
+    mask: "+998 (__) ___-__-__",
+    replacement: { _: /\d/ },
+  });
+
   const handleSubmit = async (value: Login) => {
-    const res = await signup(value);
+    const formattedphone_number = value.phone_number.replace(/[\s()-]/g, "");
+    const formattedValues = {
+      ...value,
+      phone_number: formattedphone_number,
+    };
+    const res = await signup(formattedValues);
     if (res && res.status === 201) {
       navigate("/");
     }
@@ -33,7 +44,12 @@ export default function index() {
 
   return (
     <div className="w-full h-[100vh] flex justify-center items-center p-5">
-      <h2 className="absolute left-5 top-5 text-[32px] cursor-pointer" onClick={()=>(navigate("/"))}>Back</h2>
+      <h2
+        className="absolute left-5 top-5 text-[32px] cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        Back
+      </h2>
       <div className="bg-white flex gap-10 flex-col justify-center  items-center max-w-[600px] w-full max-h-[100vh] h-full">
         <h1 className="text-[46px] font-bold">Create new admin</h1>
 
@@ -53,7 +69,11 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="first_name" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="first_name"
+                component="div"
+                className="text-[#ff0000]"
+              />
               <Field
                 type="text"
                 name="last_name"
@@ -63,7 +83,11 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="last_name" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="last_name"
+                component="div"
+                className="text-[#ff0000]"
+              />
               <Field
                 type="text"
                 name="phone_number"
@@ -72,8 +96,13 @@ export default function index() {
                 placeholder="Phone Number"
                 size="small"
                 style={{ width: "400px" }}
+                inputRef={inputRef}
               />
-              <ErrorMessage name="phone_number" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="phone_number"
+                component="div"
+                className="text-[#ff0000]"
+              />
               <Field
                 type="email"
                 name="email"
@@ -83,7 +112,11 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="email" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="email"
+                component="div"
+                className="text-[#ff0000]"
+              />
 
               <Field
                 type="password"
@@ -94,7 +127,11 @@ export default function index() {
                 size="small"
                 style={{ width: "400px" }}
               />
-              <ErrorMessage name="password" component="div" className="text-[#ff0000]" />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-[#ff0000]"
+              />
 
               <Button variant="outlined" type="submit" disabled={isSubmitting}>
                 Submit

@@ -27,9 +27,12 @@ export default function Index() {
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [reload, setReload] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  console.log(data)
 
   const theader = [
     { title: "", name: "id" },
+    { title: "Product name", name: "product_id?.name" },
+    { title: "Product name", name: "category_id?.name" },
     { title: "Brand ID", name: "brand_id" },
     { title: "Created At", name: "createdAt" },
     { title: "Quantity", name: "quantity" },
@@ -63,11 +66,12 @@ export default function Index() {
     if (res && res.status === 200) {
       let filteredData = res.data.data.stocks;
       if (searchTerm) {
-        filteredData = filteredData.filter((item:any) =>
+        filteredData = filteredData.filter((item: any) =>
           item.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
       setData(filteredData);
+      console.log(filteredData);
       setTotalItems(res.data.data.count);
     }
     const response = await getCategory(10, page, "");
