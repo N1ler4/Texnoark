@@ -6,6 +6,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { postCategorySchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
 import { useLocation, useNavigate } from "react-router-dom";
+import "../style.css"
+
 
 const { Search } = Input;
 

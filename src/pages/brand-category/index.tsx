@@ -7,6 +7,8 @@ import { postCategorySchema } from "@validation";
 import { deleteDataFromCookie, getDataFromCookie } from "@token-service";
 import { useSearchParams } from "react-router-dom";
 const { Search } = Input;
+import "../style.css"
+
 
 interface PostData {
   name: string;

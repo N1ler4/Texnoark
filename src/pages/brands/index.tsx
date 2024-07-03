@@ -18,6 +18,8 @@ import useCategoryStore from "../../store/category";
 import { UploadOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 const { Search } = Input;
+import "../style.css"
+
 
 export default function Index() {
   const { postBrand, getBrand, deleteBrand } = useBrandStore();

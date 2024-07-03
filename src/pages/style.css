@@ -1,0 +1,9 @@
+.ant-input-search-button {
+  background-color: #D55200 !important;
+  border-color: #D55200 !important;
+}
+
+.ant-input-search-button:hover {
+  background-color: #af4300 !important;
+  border-color: #af4300 !important;
+}

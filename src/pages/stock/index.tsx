@@ -9,6 +9,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useCategoryStore from "../../store/category";
 import useBrandStore from "../../store/brand";
 import useProductStore from "../../store/product";
+import "../style.css"
+
 
 export default function Index() {
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ export default function Index() {
   const theader = [
     { title: "", name: "id" },
     { title: "Product name", name: "product_id?.name" },
-    { title: "Product name", name: "category_id?.name" },
+    { title: "Category name", name: "category_id?.name" },
     { title: "Brand ID", name: "brand_id" },
     { title: "Created At", name: "createdAt" },
     { title: "Quantity", name: "quantity" },

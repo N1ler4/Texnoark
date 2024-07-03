@@ -186,11 +186,11 @@ function Index({ tbody, theader, deletIdData }: any) {
                     </div>
                   ) : item2.name === "product_id?.name" ? (
                     <div className="grid justify-center">
-                      {item.product_id.name}
+                      {item?.product_id?.name}
                     </div>
                   ) : item2.name === "category_id?.name" ? (
                     <div className="grid justify-center">
-                      {item.category_id.name}
+                      {item?.category_id?.name}
                     </div>
                   ) : (
                     <p className=" text-center">{item[item2.name]}</p>

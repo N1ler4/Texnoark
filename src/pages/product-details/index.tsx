@@ -5,6 +5,7 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { SideBar } from "@ui";
 import { useNavigate } from "react-router-dom";
+import "../style.css";
 
 const ProductDetail = () => {
   const [productDetail, setProductDetail] = useState<any>(null);
@@ -24,8 +25,8 @@ const ProductDetail = () => {
     if (res && res.status === 200) {
       setProduct(res?.data?.data.product);
       setProductDetail(res.data.data.product_detail);
-      if (res?.data?.data?.product_detail) {
-        const imgArray = res.data.data.product_detail.images.map(
+      if (res?.data?.data?.product) {
+        const imgArray = res.data.data.product.images.map(
           (url: string) => ({
             original: url,
             thumbnail: url,
@@ -58,32 +59,34 @@ const ProductDetail = () => {
             </h2>
             <p>
               <strong style={{ color: "#9388" }}>Description:</strong>{" "}
-              <div className="text-purple-600 max-w-[400px]">
+              <div className=" max-w-[400px]">
                 {productDetail.description}
               </div>
             </p>
-            <p>
+            <p className="w-[400px] flex justify-between border-b-2 border-gray-500 mt-3">
               <strong style={{ color: "#9388" }}>Colors:</strong>{" "}
-              <div className="text-purple-600 max-w-[400px] flex gap-2">
-                {productDetail.colors.map((color:any, index:any) => (
-                  <p key={index}>{color},</p>
-                ))}
+              <div className=" max-w-[400px] flex gap-2">
+                {productDetail.colors.length > 1 ? (
+                  productDetail.colors.map((color:any, index:any) => (
+                    <p key={index}>{color},</p>
+                  ))
+                ) : (
+                  <p key={0}>{productDetail.colors[0]}</p>
+                )}
               </div>
             </p>
-            <p>
+            <p className="w-[400px] flex justify-between border-b-2 border-gray-500 mt-3">
               <strong style={{ color: "#9388" }}>Quantity:</strong>{" "}
-              <div className="text-purple-600 max-w-[400px]">
+              <div className=" max-w-[400px]">
                 {productDetail.quantity}
               </div>
             </p>
-            <p>
+            <p className="w-[400px] flex justify-between border-b-2 border-gray-500 items-center mt-3">
               <strong style={{ color: "#9388" }}>Count:</strong>
               <br />
-              <div className="text-green-400 text-[24px]">
-                {productDetail.quantity}
-              </div>
+              <div>{productDetail.quantity}</div>
             </p>
-            <p>
+            <p className="mt-3">
               <strong style={{ color: "#9388" }}>Price:</strong>
               <br />
               <div className="text-[24px] flex gap-5 items-center">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Modal, Pagination, Select } from "antd";
+import { Button, Input, Modal, Pagination, Select, Upload } from "antd";
 import { GlobalTable, Notification } from "@ui";
 import useProductStore from "../../store/product";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -12,6 +12,8 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import useCategoryStore from "../../store/category";
 import useBrandStore from "../../store/brand";
+import "../style.css";
+import { UploadOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 
@@ -48,10 +50,23 @@ export default function Index() {
     category_id: "",
     brand_category_id: "",
     brand_id: "",
+    files: [],
   };
 
   const handleSubmit = async (value: any) => {
-    const res = await postProduct(value);
+    const formData = new FormData();
+    formData.append("name", value.name);
+    formData.append("price", value.price);
+    formData.append("category_id", value.category_id);
+    formData.append("brand_category_id", value.brand_category_id);
+    formData.append("brand_id", value.brand_id);
+
+    value.files.forEach((file:any) => {
+      formData.append("files", file);
+    });
+
+
+    const res = await postProduct(formData);
     if (res && res.status === 201) {
       handleClose();
       getData(page, searchTerm);
@@ -182,7 +197,7 @@ export default function Index() {
                     size="large"
                     allowClear
                     style={{ width: "100%" }}
-                    showSearch 
+                    showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       option && option.children
@@ -191,7 +206,7 @@ export default function Index() {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) !== -1
                         : false
-                    } 
+                    }
                   >
                     {brandId?.map((item: any) => (
                       <Select.Option key={item.id} value={item.id}>
@@ -216,7 +231,7 @@ export default function Index() {
                     size="large"
                     allowClear
                     style={{ width: "100%" }}
-                    showSearch 
+                    showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       option && option.children
@@ -225,7 +240,7 @@ export default function Index() {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) !== -1
                         : false
-                    } 
+                    }
                   >
                     {categoryId?.map((item: any) => (
                       <Select.Option key={item.id} value={item.id}>
@@ -275,6 +290,28 @@ export default function Index() {
                 name="brand_category_id"
                 component="div"
                 className="text-red-700"
+              />
+              <Field name="files">
+                {({ field }: any) => (
+                  <Upload
+                    {...field}
+                    multiple
+                    beforeUpload={(file) => {
+                      setFieldValue(
+                        "files",
+                        field.value ? [...field.value, file] : [file]
+                      );
+                      return false;
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                  </Upload>
+                )}
+              </Field>
+              <ErrorMessage
+                name="files"
+                component="div"
+                className="text-[#ff0000]"
               />
               <Button
                 type="primary"
